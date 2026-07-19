@@ -276,9 +276,40 @@ function setupLessonCompletion() {
   });
 }
 
-function revealActiveLessonStep() {
+function setupLessonNavigationPosition() {
   const activeStep = document.querySelector('.lesson-step-link[aria-current="step"]');
   if (!activeStep) return;
+
+  const panel = document.querySelector('.lesson-player-nav');
+  const list = document.querySelector('.lesson-step-list');
+  const storageKey = `lesson-nav-position:${window.LESSON_SLUG || 'lesson'}`;
+  let savedPosition = null;
+
+  try {
+    savedPosition = JSON.parse(window.sessionStorage.getItem(storageKey));
+  } catch (error) {
+    savedPosition = null;
+  }
+
+  if (savedPosition) {
+    if (panel) panel.scrollTop = Number(savedPosition.panel) || 0;
+    if (list) list.scrollTop = Number(savedPosition.list) || 0;
+  }
+
+  document.querySelectorAll('.lesson-step-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      try {
+        window.sessionStorage.setItem(storageKey, JSON.stringify({
+          panel: panel ? panel.scrollTop : 0,
+          list: list ? list.scrollTop : 0,
+        }));
+      } catch (error) {
+        // Navigation still works when storage is unavailable.
+      }
+    });
+  });
+
+  if (savedPosition) return;
 
   let scrollContainer = activeStep.parentElement;
   while (scrollContainer && !scrollContainer.classList.contains('lesson-player-nav')) {
@@ -300,10 +331,7 @@ function revealActiveLessonStep() {
     - containerRect.top
     - scrollContainer.clientHeight / 2
     + activeRect.height / 2;
-  scrollContainer.scrollTo({
-    top: Math.max(0, centeredTop),
-    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-  });
+  scrollContainer.scrollTop = Math.max(0, centeredTop);
 }
 
 setupCheckpointCards();
@@ -312,4 +340,4 @@ setupQuiz();
 setupChat();
 setupHomework();
 setupLessonCompletion();
-revealActiveLessonStep();
+setupLessonNavigationPosition();
