@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Book a Physics Tutor{% endblock %}
+{% block content %}
+<section class="page-shell course-hero"><span class="eyebrow">LIVE SUPPORT</span><h1>Book a physics tutor</h1><p>One-on-one support based on your recent lessons and mistakes.</p></section>
+<section class="page-shell tutoring-grid">
+  <div class="panel wide"><h2>Choose a session</h2><form action="/tutoring/book" method="post" class="booking-form"><label>What should the tutor help with?<input name="topic" required value="Speed and velocity practice"></label><label>Available time<select name="starts_at">{% for slot in slots %}<option value="{{ slot.isoformat() }}">{{ slot.strftime('%A, %B %d at %I:%M %p') }}</option>{% endfor %}</select></label><div class="price-line"><div><strong>$35</strong><span>50-minute lesson</span></div><button class="button primary" type="submit">Pay and book demo</button></div><p class="muted">This prototype uses a simulated payment. Production will connect Stripe and Google Calendar/Meet credentials.</p></form></div>
+  <div class="panel"><span class="eyebrow">WHAT THE TUTOR SEES</span><h2>Prepared before the call</h2><p>Course progress, quiz score, submitted homework, and questions asked to the AI guide.</p></div>
+</section>
+<section class="page-shell"><div class="section-title"><div><span class="eyebrow">UPCOMING</span><h2>Your tutor lessons</h2></div></div>{% if sessions %}<div class="lesson-list">{% for session in sessions %}<div class="lesson-row"><span class="lesson-number">◉</span><div><strong>{{ session.topic }}</strong><small>{{ session.starts_at.strftime('%A, %B %d at %I:%M %p') }} · ${{ '%.0f'|format(session.price_usd) }}</small></div><a class="button secondary small" href="{{ session.meeting_url }}" target="_blank">Join Meet</a></div>{% endfor %}</div>{% else %}<div class="empty-state">No tutor lessons booked yet.</div>{% endif %}</section>
+{% endblock %}

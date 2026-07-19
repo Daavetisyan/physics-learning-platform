@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<section class="page-shell dashboard-head">
+  <div><span class="eyebrow">WELCOME BACK</span><h1>{{ student.name }}</h1><p>Grade {{ student.grade }} · Continue building your motion intuition.</p></div>
+  <div class="progress-ring" style="--progress: {{ progress_percent }}"><strong>{{ progress_percent }}%</strong><span>course progress</span></div>
+</section>
+<section class="page-shell dashboard-grid">
+  <div class="panel wide">
+    <div class="panel-header"><div><span class="eyebrow">CONTINUE LEARNING</span><h2>Position and Reference Points</h2></div><a class="button primary small" href="/lesson/position-reference-points">Continue</a></div>
+    <div class="lesson-preview"><div class="preview-visual"><div class="road-line"></div><div class="car">▰</div></div><div><p>Learn how origins, directions, coordinates, and frames of reference create the language used in every later motion lesson.</p><div class="tag-row"><span>70–90 min</span><span>Reference-frame lab</span><span>Galileo guide</span></div></div></div>
+  </div>
+  <div class="panel">
+    <span class="eyebrow">WEEKLY GOAL</span><h2>Complete Lesson 1</h2><div class="bar"><span style="width:0%"></span></div><p>Build the coordinate foundation before moving to distance and displacement.</p>
+  </div>
+  <div class="panel">
+    <span class="eyebrow">TUTOR SUPPORT</span><h2>{% if sessions %}{{ sessions|length }} booked{% else %}No sessions yet{% endif %}</h2><p>Get targeted help based on your lesson history.</p><a href="/tutoring">Book a tutor lesson →</a>
+  </div>
+</section>
+<section class="page-shell">
+  <div class="section-title"><div><span class="eyebrow">COURSE MAP</span><h2>{{ course.title }}</h2></div><a href="/course/{{ course.slug }}">View full course</a></div>
+  <div class="lesson-list">
+    {% for lesson in lessons[:5] %}
+      {% set p = progress_map.get(lesson.id) %}
+      <a class="lesson-row" href="/lesson/{{ lesson.slug }}"><span class="lesson-number">{{ "%02d"|format(loop.index) }}</span><div><strong>{{ lesson.title }}</strong><small>{{ lesson.summary }}</small></div><span class="status {{ p.status if p else 'not_started' }}">{% if lesson.slug in production_slugs %}{{ 'Completed' if p and p.status == 'completed' else 'Study' }}{% else %}Building{% endif %}</span></a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Vector Academy — Learn Physics by Doing{% endblock %}
+{% block content %}
+<section class="hero page-shell">
+  <div class="hero-copy">
+    <span class="eyebrow">PHYSICS FOR GRADES 7–9</span>
+    <h1>Understand physics.<br>Don’t just memorize it.</h1>
+    <p>Interactive lessons, experiments, scientist-guided explanations, real homework feedback, and optional live tutoring.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="/dashboard">Open student demo</a>
+      <a class="button secondary" href="/lesson/position-reference-points">View sample lesson</a>
+    </div>
+    <div class="trust-row"><span>✓ Parent-visible progress</span><span>✓ Real tutor support</span><span>✓ Built around mastery</span></div>
+  </div>
+  <div class="hero-card">
+    <div class="orbit-card">
+      <div class="planet"></div>
+      <div class="orbit"></div>
+      <div class="scientist-badge">GG</div>
+    </div>
+    <div class="mini-stat"><strong>24 min</strong><span>learning today</span></div>
+    <div class="mini-stat"><strong>2 lessons</strong><span>completed</span></div>
+  </div>
+</section>
+<section class="page-shell feature-grid">
+  <article><span class="feature-icon">↗</span><h3>Interactive theory</h3><p>Students predict, test variables, and explain what changed.</p></article>
+  <article><span class="feature-icon">∑</span><h3>AI scientist guide</h3><p>Lesson-aware scientist characters with guided and answer-checking modes.</p></article>
+  <article><span class="feature-icon">◉</span><h3>Live tutor help</h3><p>Book a lesson, pay per session, and join by Google Meet.</p></article>
+</section>
+{% endblock %}

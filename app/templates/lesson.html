@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+{% block title %}{{ lesson.title }}{% endblock %}
+{% block content %}
+<div class="lesson-layout">
+  <aside class="lesson-nav">
+    <a href="/course/{{ course.slug }}">← Course map</a>
+    <span class="eyebrow">LESSON {{ "%02d"|format(lesson.order_index) }}</span>
+    <h2>{{ lesson.title }}</h2>
+    {% if content %}
+    <div class="lesson-nav-meta">
+      <span>{{ content.estimated_time }}</span>
+      <span>{{ content.grade_band }}</span>
+      <span class="content-status">{{ content.status }}</span>
+    </div>
+    <nav aria-label="Lesson sections">
+      <a href="#start">Start</a>
+      <a href="#vocabulary">Vocabulary</a>
+      <a href="#theory">Deep theory</a>
+      <a href="#video">Video plan</a>
+      <a href="#simulation">Interactive lab</a>
+      <a href="#examples">Worked examples</a>
+      <a href="#misconceptions">Misconceptions</a>
+      <a href="#practice">Practice</a>
+      <a href="#assistant">Ask {{ content.scientist.name.split(' ')[0] }}</a>
+      <a href="#assessment">Assessment</a>
+      <a href="#homework">Homework</a>
+      <a href="#summary">Summary</a>
+    </nav>
+    {% endif %}
+  </aside>
+
+  <article class="lesson-content">
+    {% if content %}
+    <section class="lesson-title" id="start">
+      <span class="eyebrow">{{ lesson.unit|upper }}</span>
+      <h1>{{ lesson.title }}</h1>
+      <p>{{ lesson.summary }}</p>
+      <div class="tag-row lesson-tags">
+        <span>{{ content.estimated_time }}</span>
+        <span>{{ content.grade_band }}</span>
+        <span>Deep theory</span>
+        <span>Interactive investigation</span>
+      </div>
+      <div class="essential-question">
+        <span>ESSENTIAL QUESTION</span>
+        <strong>{{ content.essential_question }}</strong>
+      </div>
+    </section>
+
+    <section class="lesson-section">
+      <span class="eyebrow">LEARNING MAP</span>
+      <h2>What this lesson builds</h2>
+      <div class="objective-grid objective-grid-five">
+        {% for objective in content.objectives %}
+        <div><span>{{ loop.index }}</span><p>{{ objective }}</p></div>
+        {% endfor %}
+      </div>
+      <div class="prerequisite-box">
+        <h3>Before you begin</h3>
+        <ul>{% for item in content.prerequisites %}<li>{{ item }}</li>{% endfor %}</ul>
+      </div>
+    </section>
+
+    <section class="lesson-section diagnostic-section">
+      <span class="eyebrow">DIAGNOSTIC</span>
+      <h2>Start with your current idea</h2>
+      <div class="checkpoint-card diagnostic-card" data-correct="{{ content.diagnostic.correct }}" data-explanation="{{ content.diagnostic.explanation }}">
+        <h3>{{ content.diagnostic.question }}</h3>
+        <div class="checkpoint-options">
+          {% for option in content.diagnostic.options %}
+          <button type="button" class="checkpoint-option" data-answer="{{ option }}">{{ option }}</button>
+          {% endfor %}
+        </div>
+        <p class="checkpoint-feedback" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="vocabulary" class="lesson-section">
+      <span class="eyebrow">PHYSICS LANGUAGE</span>
+      <h2>Vocabulary you will use precisely</h2>
+      <p class="section-intro">These words are related but not interchangeable. Open each term, read the definition, and connect it to the example.</p>
+      <div class="vocabulary-grid">
+        {% for item in content.vocabulary %}
+        <details class="vocabulary-card" {% if loop.index <= 2 %}open{% endif %}>
+          <summary>{{ item.term }}</summary>
+          <p>{{ item.definition }}</p>
+          <div class="vocabulary-example"><strong>Example</strong><span>{{ item.example }}</span></div>
+        </details>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="theory" class="lesson-section theory-section">
+      <span class="eyebrow">DEEP THEORY</span>
+      <h2>Build the complete idea step by step</h2>
+      <p class="section-intro">Do not rush through this section. Each chapter adds one necessary piece to the language of motion.</p>
+
+      {% for chapter in content.theory_chapters %}
+      <article class="theory-chapter" id="theory-{{ chapter.number }}">
+        <div class="chapter-number">{{ "%02d"|format(chapter.number) }}</div>
+        <div class="chapter-content">
+          <span class="chapter-label">THEORY CHAPTER</span>
+          <h3>{{ chapter.heading }}</h3>
+          <p class="chapter-lead">{{ chapter.lead }}</p>
+          {% for paragraph in chapter.paragraphs %}<p>{{ paragraph }}</p>{% endfor %}
+          {% if chapter.formula %}<div class="formula">{{ chapter.formula }}</div>{% endif %}
+          <div class="key-idea"><strong>Key idea</strong><span>{{ chapter.key_idea }}</span></div>
+          <div class="checkpoint-card" data-correct="{{ chapter.check.correct }}" data-explanation="{{ chapter.check.explanation }}">
+            <span class="checkpoint-label">PAUSE AND CHECK</span>
+            <h4>{{ chapter.check.question }}</h4>
+            <div class="checkpoint-options">
+              {% for option in chapter.check.options %}
+              <button type="button" class="checkpoint-option" data-answer="{{ option }}">{{ option }}</button>
+              {% endfor %}
+            </div>
+            <p class="checkpoint-feedback" aria-live="polite"></p>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </section>
+
+    <section id="video" class="lesson-section">
+      <span class="eyebrow">VIDEO EXPLANATION</span>
+      <h2>{{ content.video.title }}</h2>
+      <p class="section-intro">The finished video will reinforce—not replace—the theory. It will use physical objects, a visible coordinate line, and prediction pauses.</p>
+      <div class="video-placeholder detailed-video">
+        <div class="play">▶</div>
+        <div>
+          <strong>Planned duration: {{ content.video.target_duration }}</strong>
+          <p>The recording slot is ready. The production storyboard below is now part of the lesson specification.</p>
+        </div>
+      </div>
+      <div class="video-plan-grid">
+        <div class="plan-card">
+          <h3>Storyboard</h3>
+          <ol>{% for item in content.video.storyboard %}<li>{{ item }}</li>{% endfor %}</ol>
+        </div>
+        <div class="plan-card">
+          <h3>Filming details</h3>
+          <ul>{% for item in content.video.filming_notes %}<li>{{ item }}</li>{% endfor %}</ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="simulation" class="lesson-section">
+      <span class="eyebrow">INTERACTIVE LAB</span>
+      <h2>{{ content.simulation.title }}</h2>
+      <p class="section-intro">{{ content.simulation.instruction }}</p>
+      <div class="simulation-card position-simulation" data-simulation="position-reference-frame">
+        <div class="position-stage">
+          <div class="axis-direction-label"><span id="negativeDirection">Negative</span><span id="positiveDirection">Positive →</span></div>
+          <div id="coordinateAxis" class="coordinate-axis" aria-label="Coordinate line from negative ten to positive ten meters">
+            <div class="axis-line"></div>
+            <div id="originMarker" class="origin-marker"><span>ORIGIN</span></div>
+            <div id="objectA" class="position-object object-a"><span>A</span></div>
+            <div id="objectB" class="position-object object-b"><span>B</span></div>
+          </div>
+          <div class="position-readouts">
+            <div><small>Object A coordinate</small><strong id="objectAReadout">-3 m</strong></div>
+            <div><small>Object B coordinate</small><strong id="objectBReadout">5 m</strong></div>
+            <div><small>A relative to B</small><strong id="relativeAReadout">-8 m</strong></div>
+            <div><small>Physical separation</small><strong id="separationReadout">8 m</strong></div>
+          </div>
+        </div>
+        <div class="position-controls">
+          <label>Object A physical position
+            <input id="objectAPosition" type="range" min="-10" max="10" step="1" value="-3">
+            <span id="objectAPositionLabel">-3 m from laboratory zero</span>
+          </label>
+          <label>Object B physical position
+            <input id="objectBPosition" type="range" min="-10" max="10" step="1" value="5">
+            <span id="objectBPositionLabel">5 m from laboratory zero</span>
+          </label>
+          <label>Choose the displayed origin
+            <select id="referenceSelect">
+              <option value="lab">Laboratory zero</option>
+              <option value="a">Object A</option>
+              <option value="b">Object B</option>
+            </select>
+          </label>
+          <label>Choose the positive direction
+            <select id="positiveDirectionSelect">
+              <option value="right">Right is positive</option>
+              <option value="left">Left is positive</option>
+            </select>
+          </label>
+        </div>
+        <div class="lab-observation">
+          <strong>Observation guide</strong>
+          <ol>
+            <li>Keep both objects fixed and change only the origin. Which values change?</li>
+            <li>Reverse the positive direction. What happens to signs and magnitudes?</li>
+            <li>Move one object. Which quantities now describe a real physical change?</li>
+          </ol>
+          <p id="frameExplanation">The laboratory zero is the origin and right is positive.</p>
+        </div>
+        <div class="prediction-box simulation-prediction" data-correct="{{ content.simulation.prediction_correct }}" data-explanation="{{ content.simulation.prediction_explanation }}">
+          <strong>Prediction challenge</strong>
+          <p>{{ content.simulation.prediction }}</p>
+          <div>
+            {% for option in content.simulation.prediction_options %}
+            <button type="button" class="chip simulation-prediction-option" data-answer="{{ option }}">{{ option }}</button>
+            {% endfor %}
+          </div>
+          <p class="simulation-prediction-feedback" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="examples" class="lesson-section">
+      <span class="eyebrow">WORKED EXAMPLES</span>
+      <h2>Follow the reasoning, not only the answer</h2>
+      {% for example in content.worked_examples %}
+      <details class="example-card detailed-example" {% if loop.first %}open{% endif %}>
+        <summary><span>{{ example.title }}</span><small>{{ example.question }}</small></summary>
+        <div class="example-body">
+          <h4>Reasoning steps</h4>
+          <ol>{% for step in example.steps %}<li>{{ step }}</li>{% endfor %}</ol>
+          <div class="example-answer"><strong>Answer</strong><span>{{ example.answer }}</span></div>
+          <p><strong>Why this works:</strong> {{ example.reasoning }}</p>
+        </div>
+      </details>
+      {% endfor %}
+    </section>
+
+    <section id="misconceptions" class="lesson-section">
+      <span class="eyebrow">COMMON MISCONCEPTIONS</span>
+      <h2>Correct the idea before it becomes a habit</h2>
+      <div class="misconception-list">
+        {% for item in content.misconceptions %}
+        <article class="misconception-card">
+          <div class="myth-label">NOT QUITE</div>
+          <h3>{{ item.myth }}</h3>
+          <div class="correction"><strong>Better physics:</strong> {{ item.correction }}</div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="practice" class="lesson-section">
+      <span class="eyebrow">DIFFERENTIATED PRACTICE</span>
+      <h2>Practice at increasing depth</h2>
+      <p class="section-intro">Start at Foundation. Move forward when you can explain your answer, not merely choose it.</p>
+      <div class="practice-levels">
+        {% for group in content.practice_groups %}
+        <details class="practice-level" {% if loop.first %}open{% endif %}>
+          <summary><span>{{ group.level }}</span><small>{{ group.description }}</small></summary>
+          <ol>{% for question in group.questions %}<li>{{ question }}</li>{% endfor %}</ol>
+        </details>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="assistant" class="lesson-section">
+      <span class="eyebrow">AI SCIENTIST GUIDE</span>
+      <h2>Ask {{ content.scientist.name }}</h2>
+      <div class="ai-card">
+        <div class="scientist-panel">
+          <div class="scientist-avatar">{{ content.scientist.initials }}</div>
+          <strong>{{ content.scientist.name }}</strong>
+          <small>{{ content.scientist.subtitle }}</small>
+          <p>“{{ content.scientist.opening }}”</p>
+        </div>
+        <div class="chat-panel">
+          <div class="mode-row">
+            <button class="mode active" data-mode="explain">Explain</button>
+            <button class="mode" data-mode="guide">Guide me</button>
+            <button class="mode" data-mode="check">Check my work</button>
+          </div>
+          <div id="chatMessages" class="chat-messages">
+            <div class="bot-message">Ask about reference points, origins, coordinates, signs, relative position, or frames of reference. You can also paste your calculation.</div>
+          </div>
+          <form id="chatForm">
+            <div class="chat-input">
+              <input id="chatInput" aria-label="Question for the AI scientist" placeholder="Type or use voice…">
+              <button id="voiceButton" type="button" title="Voice input" aria-label="Start voice input">●</button>
+              <button type="submit">Send</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="assessment" class="lesson-section">
+      <span class="eyebrow">MASTERY ASSESSMENT</span>
+      <h2>Check the complete concept</h2>
+      <p class="section-intro">A score of 75% unlocks lesson completion. Missed questions remain useful: they identify exactly what to revisit.</p>
+      <form id="quizForm" class="quiz-form">
+        {% for q in content.quiz %}
+        <fieldset data-correct="{{ q.correct }}">
+          <legend>{{ loop.index }}. {{ q.question }}</legend>
+          {% for option in q.options %}
+          <label><input type="radio" name="{{ q.id }}" value="{{ option }}"> {{ option }}</label>
+          {% endfor %}
+          <p class="question-feedback"></p>
+        </fieldset>
+        {% endfor %}
+        <button class="button primary" type="submit">Check all answers</button>
+        <p id="quizResult" class="quiz-result" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="homework" class="lesson-section">
+      <span class="eyebrow">HOMEWORK INVESTIGATION</span>
+      <h2>{{ content.homework.title }}</h2>
+      <div class="homework-card expanded-homework">
+        <p>{{ content.homework.instructions }}</p>
+        <ol>{% for question in content.homework.questions %}<li>{{ question }}</li>{% endfor %}</ol>
+        <textarea id="homeworkAnswer" rows="14" placeholder="{{ content.homework.submission_prompt }}"></textarea>
+        <div class="homework-actions">
+          <span>Minimum submission: definitions, three coordinates, two calculations, and written interpretations.</span>
+          <button id="submitHomework" class="button primary">Submit homework</button>
+        </div>
+        <p id="homeworkResult" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section id="summary" class="lesson-section">
+      <span class="eyebrow">LESSON SUMMARY</span>
+      <h2>The ideas that must remain</h2>
+      <div class="summary-card">
+        <ul>{% for item in content.summary %}<li>{{ item }}</li>{% endfor %}</ul>
+      </div>
+      <div class="reflection-card">
+        <strong>Exit reflection</strong>
+        <p>{{ content.reflection }}</p>
+      </div>
+    </section>
+
+    <div class="lesson-complete">
+      <div>
+        <span class="eyebrow">READY TO CONTINUE?</span>
+        <h2>Save your mastery</h2>
+        <p>Complete the assessment before marking the lesson finished.</p>
+      </div>
+      <button id="completeLesson" class="button primary">Mark lesson complete</button>
+    </div>
+    {% else %}
+    <section class="lesson-title">
+      <span class="eyebrow">BUILDING STEP BY STEP</span>
+      <h1>{{ lesson.title }}</h1>
+      <p>{{ lesson.summary }}</p>
+      <div class="empty-state">
+        This lesson is in the course sequence but has not yet passed the new production standard. Continue with
+        <a href="/lesson/position-reference-points"><strong>Lesson 1: Position and Reference Points</strong></a>.
+      </div>
+    </section>
+    {% endif %}
+  </article>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if content %}
+<script>
+  window.LESSON_SLUG = "{{ lesson.slug }}";
+  window.MASTERY_THRESHOLD = 75;
+</script>
+<script src="{{ url_for('static', path='js/lesson.js') }}"></script>
+{% endif %}
+{% endblock %}

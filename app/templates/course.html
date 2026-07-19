@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block content %}
+<section class="page-shell course-hero">
+  <span class="eyebrow">COURSE 01</span>
+  <h1>{{ course.title }}</h1>
+  <p>{{ course.subtitle }}</p>
+  <p class="muted">{{ course.description }}</p>
+</section>
+<section class="page-shell">
+  <div class="unit-heading">
+    <span>UNIT 1</span>
+    <h2>Motion and Graphs</h2>
+    <p>Built one complete lesson at a time. Only lessons that pass the production standard are marked ready.</p>
+  </div>
+  <div class="course-list">
+    {% for lesson in lessons %}
+      {% set p = progress_map.get(lesson.id) %}
+      {% set is_production = lesson.slug in production_slugs %}
+      <a href="/lesson/{{ lesson.slug }}" class="course-item {{ 'production-course-item' if is_production else 'draft-course-item' }}">
+        <span class="lesson-number">{{ "%02d"|format(loop.index) }}</span>
+        <div class="course-item-copy">
+          <div class="course-title-line">
+            <strong>{{ lesson.title }}</strong>
+            <span class="build-badge {{ 'ready' if is_production else 'building' }}">{{ 'Production' if is_production else 'Building' }}</span>
+          </div>
+          <p>{{ lesson.summary }}</p>
+          <small>{{ lesson.duration_minutes }} minutes</small>
+        </div>
+        <span class="status {{ p.status if p else 'not_started' }}">{{ '✓' if p and p.status == 'completed' else '→' }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

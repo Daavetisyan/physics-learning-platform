@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% block title %}{{ current_step.label }} · {{ lesson.title }}{% endblock %}
+{% block content %}
+<div class="lesson-layout lesson-player-layout">
+  <aside class="lesson-nav lesson-player-nav">
+    <a href="/course/{{ course.slug }}">← Course map</a>
+    <span class="eyebrow">LESSON {{ "%02d"|format(lesson.order_index) }}</span>
+    <h2>{{ lesson.title }}</h2>
+
+    <div class="lesson-nav-meta">
+      <span>{{ content.estimated_time }}</span>
+      <span>{{ content.grade_band }}</span>
+      <span class="content-status">{{ content.status }}</span>
+    </div>
+
+    <div class="lesson-step-progress" aria-label="Lesson position">
+      <div><strong>Step {{ step_index }}</strong><span>of {{ steps|length }}</span></div>
+      <div class="step-progress-track"><span style="width: {{ step_percent }}%"></span></div>
+    </div>
+
+    <nav class="lesson-step-list" aria-label="Lesson sections">
+      {% for step in steps %}
+      <a href="/lesson/{{ lesson.slug }}/{{ step.key }}"
+         class="lesson-step-link {% if step.key == current_step.key %}active{% endif %} {% if step.group == 'Theory' %}theory-step-link{% endif %}">
+        <span class="lesson-step-number">{{ "%02d"|format(loop.index) }}</span>
+        <span class="lesson-step-copy">
+          <small>{{ step.group }}</small>
+          <strong>{{ step.label }}</strong>
+        </span>
+      </a>
+      {% endfor %}
+    </nav>
+  </aside>
+
+  <main class="lesson-content lesson-step-content">
+    <header class="lesson-step-header">
+      <div>
+        <span class="eyebrow">{{ current_step.group|upper }} · STEP {{ step_index }} OF {{ steps|length }}</span>
+        <h1>{{ current_step.label }}</h1>
+        <p>{{ current_step.description }}</p>
+      </div>
+      <a class="button secondary small" href="/lesson/{{ lesson.slug }}/assistant">Ask {{ content.scientist.name.split(' ')[0] }}</a>
+    </header>
+
+    {% if current_step.key == "overview" %}
+    <section class="lesson-step-body">
+      <div class="lesson-overview-hero">
+        <span class="eyebrow">{{ lesson.unit|upper }}</span>
+        <h2>{{ lesson.title }}</h2>
+        <p>{{ lesson.summary }}</p>
+        <div class="tag-row lesson-tags">
+          <span>{{ content.estimated_time }}</span>
+          <span>{{ content.grade_band }}</span>
+          <span>Deep theory</span>
+          <span>Interactive investigation</span>
+        </div>
+      </div>
+
+      <div class="essential-question">
+        <span>ESSENTIAL QUESTION</span>
+        <strong>{{ content.essential_question }}</strong>
+      </div>
+
+      <div class="step-block">
+        <span class="eyebrow">LEARNING MAP</span>
+        <h2>What this lesson builds</h2>
+        <div class="objective-grid objective-grid-five">
+          {% for objective in content.objectives %}
+          <div><span>{{ loop.index }}</span><p>{{ objective }}</p></div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="prerequisite-box">
+        <h3>Before you begin</h3>
+        <ul>{% for item in content.prerequisites %}<li>{{ item }}</li>{% endfor %}</ul>
+      </div>
+
+      <div class="step-block">
+        <span class="eyebrow">DIAGNOSTIC</span>
+        <h2>Start with your current idea</h2>
+        <div class="checkpoint-card diagnostic-card" data-correct="{{ content.diagnostic.correct }}" data-explanation="{{ content.diagnostic.explanation }}">
+          <h3>{{ content.diagnostic.question }}</h3>
+          <div class="checkpoint-options">
+            {% for option in content.diagnostic.options %}
+            <button type="button" class="checkpoint-option" data-answer="{{ option }}">{{ option }}</button>
+            {% endfor %}
+          </div>
+          <p class="checkpoint-feedback" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    {% elif current_step.key == "vocabulary" %}
+    <section class="lesson-step-body">
+      <p class="section-intro">These words are related, but they are not interchangeable. Open each term and connect the definition to its example.</p>
+      <div class="vocabulary-grid">
+        {% for item in content.vocabulary %}
+        <details class="vocabulary-card" {% if loop.index <= 2 %}open{% endif %}>
+          <summary>{{ item.term }}</summary>
+          <p>{{ item.definition }}</p>
+          <div class="vocabulary-example"><strong>Example</strong><span>{{ item.example }}</span></div>
+        </details>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% elif current_step.key.startswith("theory-") %}
+    <section class="lesson-step-body">
+      <article class="theory-chapter theory-chapter-page" id="theory-{{ chapter.number }}">
+        <div class="chapter-number">{{ "%02d"|format(chapter.number) }}</div>
+        <div class="chapter-content">
+          <span class="chapter-label">THEORY CHAPTER {{ chapter.number }} OF {{ content.theory_chapters|length }}</span>
+          <h2>{{ chapter.heading }}</h2>
+          <p class="chapter-lead">{{ chapter.lead }}</p>
+          {% for paragraph in chapter.paragraphs %}<p>{{ paragraph }}</p>{% endfor %}
+          {% if chapter.formula %}<div class="formula">{{ chapter.formula }}</div>{% endif %}
+          <div class="key-idea"><strong>Key idea</strong><span>{{ chapter.key_idea }}</span></div>
+          <div class="checkpoint-card" data-correct="{{ chapter.check.correct }}" data-explanation="{{ chapter.check.explanation }}">
+            <span class="checkpoint-label">PAUSE AND CHECK</span>
+            <h3>{{ chapter.check.question }}</h3>
+            <div class="checkpoint-options">
+              {% for option in chapter.check.options %}
+              <button type="button" class="checkpoint-option" data-answer="{{ option }}">{{ option }}</button>
+              {% endfor %}
+            </div>
+            <p class="checkpoint-feedback" aria-live="polite"></p>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    {% elif current_step.key == "video" %}
+    <section class="lesson-step-body">
+      <p class="section-intro">The finished video reinforces the theory rather than replacing it. It uses physical objects, a visible coordinate line, and prediction pauses.</p>
+      <div class="video-placeholder detailed-video">
+        <div class="play">▶</div>
+        <div>
+          <strong>{{ content.video.title }}</strong>
+          <p>Planned duration: {{ content.video.target_duration }}</p>
+        </div>
+      </div>
+      <div class="video-plan-grid">
+        <div class="plan-card"><h3>Storyboard</h3><ol>{% for item in content.video.storyboard %}<li>{{ item }}</li>{% endfor %}</ol></div>
+        <div class="plan-card"><h3>Filming details</h3><ul>{% for item in content.video.filming_notes %}<li>{{ item }}</li>{% endfor %}</ul></div>
+      </div>
+    </section>
+
+    {% elif current_step.key == "simulation" %}
+    <section class="lesson-step-body">
+      <p class="section-intro">{{ content.simulation.instruction }}</p>
+      <div class="simulation-card position-simulation" data-simulation="position-reference-frame">
+        <div class="position-stage">
+          <div class="axis-direction-label"><span id="negativeDirection">Negative</span><span id="positiveDirection">Positive →</span></div>
+          <div id="coordinateAxis" class="coordinate-axis" aria-label="Coordinate line from negative ten to positive ten meters">
+            <div class="axis-line"></div>
+            <div id="originMarker" class="origin-marker"><span>ORIGIN</span></div>
+            <div id="objectA" class="position-object object-a"><span>A</span></div>
+            <div id="objectB" class="position-object object-b"><span>B</span></div>
+          </div>
+          <div class="position-readouts">
+            <div><small>Object A coordinate</small><strong id="objectAReadout">-3 m</strong></div>
+            <div><small>Object B coordinate</small><strong id="objectBReadout">5 m</strong></div>
+            <div><small>A relative to B</small><strong id="relativeAReadout">-8 m</strong></div>
+            <div><small>Physical separation</small><strong id="separationReadout">8 m</strong></div>
+          </div>
+        </div>
+        <div class="position-controls">
+          <label>Object A physical position<input id="objectAPosition" type="range" min="-10" max="10" step="1" value="-3"><span id="objectAPositionLabel">-3 m from laboratory zero</span></label>
+          <label>Object B physical position<input id="objectBPosition" type="range" min="-10" max="10" step="1" value="5"><span id="objectBPositionLabel">5 m from laboratory zero</span></label>
+          <label>Choose the displayed origin<select id="referenceSelect"><option value="lab">Laboratory zero</option><option value="a">Object A</option><option value="b">Object B</option></select></label>
+          <label>Choose the positive direction<select id="positiveDirectionSelect"><option value="right">Right is positive</option><option value="left">Left is positive</option></select></label>
+        </div>
+        <div class="lab-observation">
+          <strong>Observation guide</strong>
+          <ol><li>Keep both objects fixed and change only the origin. Which values change?</li><li>Reverse the positive direction. What happens to signs and magnitudes?</li><li>Move one object. Which quantities now describe a real physical change?</li></ol>
+          <p id="frameExplanation">The laboratory zero is the origin and right is positive.</p>
+        </div>
+        <div class="prediction-box simulation-prediction" data-correct="{{ content.simulation.prediction_correct }}" data-explanation="{{ content.simulation.prediction_explanation }}">
+          <strong>Prediction challenge</strong><p>{{ content.simulation.prediction }}</p>
+          <div>{% for option in content.simulation.prediction_options %}<button type="button" class="chip simulation-prediction-option" data-answer="{{ option }}">{{ option }}</button>{% endfor %}</div>
+          <p class="simulation-prediction-feedback" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    {% elif current_step.key == "examples" %}
+    <section class="lesson-step-body">
+      <p class="section-intro">Open each example and follow the reasoning before looking at the final answer.</p>
+      {% for example in content.worked_examples %}
+      <details class="example-card detailed-example" {% if loop.first %}open{% endif %}>
+        <summary><span>{{ example.title }}</span><small>{{ example.question }}</small></summary>
+        <div class="example-body"><h3>Reasoning steps</h3><ol>{% for step in example.steps %}<li>{{ step }}</li>{% endfor %}</ol><div class="example-answer"><strong>Answer</strong><span>{{ example.answer }}</span></div><p><strong>Why this works:</strong> {{ example.reasoning }}</p></div>
+      </details>
+      {% endfor %}
+    </section>
+
+    {% elif current_step.key == "misconceptions" %}
+    <section class="lesson-step-body">
+      <div class="misconception-list">
+        {% for item in content.misconceptions %}
+        <article class="misconception-card"><div class="myth-label">NOT QUITE</div><h3>{{ item.myth }}</h3><div class="correction"><strong>Better physics:</strong> {{ item.correction }}</div></article>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% elif current_step.key == "practice" %}
+    <section class="lesson-step-body">
+      <p class="section-intro">Start at Foundation. Move forward when you can explain your reasoning, not merely state an answer.</p>
+      <div class="practice-levels">
+        {% for group in content.practice_groups %}
+        <details class="practice-level" {% if loop.first %}open{% endif %}><summary><span>{{ group.level }}</span><small>{{ group.description }}</small></summary><ol>{% for question in group.questions %}<li>{{ question }}</li>{% endfor %}</ol></details>
+        {% endfor %}
+      </div>
+    </section>
+
+    {% elif current_step.key == "assistant" %}
+    <section class="lesson-step-body">
+      <div class="ai-card">
+        <div class="scientist-panel"><div class="scientist-avatar">{{ content.scientist.initials }}</div><strong>{{ content.scientist.name }}</strong><small>{{ content.scientist.subtitle }}</small><p>“{{ content.scientist.opening }}”</p></div>
+        <div class="chat-panel">
+          <div class="mode-row"><button class="mode active" data-mode="explain">Explain</button><button class="mode" data-mode="guide">Guide me</button><button class="mode" data-mode="check">Check my work</button></div>
+          <div id="chatMessages" class="chat-messages"><div class="bot-message">Ask about reference points, origins, coordinates, signs, relative position, or frames of reference. You can also paste your calculation.</div></div>
+          <form id="chatForm"><div class="chat-input"><input id="chatInput" aria-label="Question for the AI scientist" placeholder="Type or use voice…"><button id="voiceButton" type="button" title="Voice input" aria-label="Start voice input">●</button><button type="submit">Send</button></div></form>
+        </div>
+      </div>
+    </section>
+
+    {% elif current_step.key == "assessment" %}
+    <section class="lesson-step-body assessment-step">
+      <p class="section-intro">A score of 75% unlocks lesson completion. Each question is presented as a clear card; the title now stays inside the card rather than cutting through its border.</p>
+      <form id="quizForm" class="quiz-form quiz-card-list">
+        {% for q in content.quiz %}
+        <fieldset class="quiz-question-card" data-correct="{{ q.correct }}">
+          <legend><span class="quiz-question-index">{{ loop.index }}</span><span>{{ q.question }}</span></legend>
+          <div class="quiz-options">
+            {% for option in q.options %}
+            <label class="quiz-option"><input type="radio" name="{{ q.id }}" value="{{ option }}"><span>{{ option }}</span></label>
+            {% endfor %}
+          </div>
+          <p class="question-feedback" aria-live="polite"></p>
+        </fieldset>
+        {% endfor %}
+        <div class="assessment-actions"><button class="button primary" type="submit">Check all answers</button><p id="quizResult" class="quiz-result" aria-live="polite"></p></div>
+      </form>
+    </section>
+
+    {% elif current_step.key == "homework" %}
+    <section class="lesson-step-body">
+      <div class="homework-card expanded-homework">
+        <h2>{{ content.homework.title }}</h2><p>{{ content.homework.instructions }}</p><ol>{% for question in content.homework.questions %}<li>{{ question }}</li>{% endfor %}</ol>
+        <textarea id="homeworkAnswer" rows="14" placeholder="{{ content.homework.submission_prompt }}"></textarea>
+        <div class="homework-actions"><span>Minimum submission: definitions, three coordinates, two calculations, and written interpretations.</span><button id="submitHomework" class="button primary">Submit homework</button></div><p id="homeworkResult" aria-live="polite"></p>
+      </div>
+    </section>
+
+    {% elif current_step.key == "summary" %}
+    <section class="lesson-step-body">
+      <div class="summary-card"><ul>{% for item in content.summary %}<li>{{ item }}</li>{% endfor %}</ul></div>
+      <div class="reflection-card"><strong>Exit reflection</strong><p>{{ content.reflection }}</p></div>
+      <div class="lesson-complete lesson-complete-inline"><div><span class="eyebrow">READY TO CONTINUE?</span><h2>Save your mastery</h2><p>Reach at least 75% on the assessment before marking the lesson finished.</p></div><button id="completeLesson" class="button primary">Mark lesson complete</button></div>
+    </section>
+    {% endif %}
+
+    <nav class="lesson-pager" aria-label="Previous and next lesson section">
+      {% if previous_step %}
+      <a class="pager-link previous" href="/lesson/{{ lesson.slug }}/{{ previous_step.key }}"><small>← PREVIOUS</small><strong>{{ previous_step.label }}</strong></a>
+      {% else %}
+      <a class="pager-link previous" href="/course/{{ course.slug }}"><small>← BACK</small><strong>Course map</strong></a>
+      {% endif %}
+      {% if next_step %}
+      <a class="pager-link next" href="/lesson/{{ lesson.slug }}/{{ next_step.key }}"><small>CONTINUE →</small><strong>{{ next_step.label }}</strong></a>
+      {% else %}
+      <a class="pager-link next" href="/course/{{ course.slug }}"><small>FINISH →</small><strong>Return to course</strong></a>
+      {% endif %}
+    </nav>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.LESSON_SLUG = "{{ lesson.slug }}";
+  window.MASTERY_THRESHOLD = 75;
+  window.EXISTING_SCORE = {{ progress.score if progress and progress.score is not none else 'null' }};
+</script>
+<script src="{{ url_for('static', path='js/lesson.js') }}"></script>
+{% endblock %}

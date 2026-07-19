@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Creator Dashboard{% endblock %}
+{% block content %}
+<section class="page-shell course-hero"><span class="eyebrow">CREATOR VIEW</span><h1>Teaching operations</h1><p>A first internal dashboard for homework and tutor-session monitoring.</p></section>
+<section class="page-shell dashboard-grid"><div class="panel wide"><span class="eyebrow">HOMEWORK SUBMISSIONS</span><h2>{{ submissions|length }} received</h2>{% if submissions %}{% for item in submissions %}<div class="admin-record"><strong>Speed and Velocity</strong><p>{{ item.answer }}</p><small>{{ item.submitted_at.strftime('%Y-%m-%d %H:%M') }}</small></div>{% endfor %}{% else %}<p>No submissions yet. Submit homework from the sample lesson.</p>{% endif %}</div><div class="panel"><span class="eyebrow">TUTOR SESSIONS</span><h2>{{ sessions|length }} scheduled</h2>{% for session in sessions %}<div class="admin-record"><strong>{{ session.topic }}</strong><small>{{ session.starts_at.strftime('%Y-%m-%d %H:%M') }}</small></div>{% endfor %}</div></section>
+{% endblock %}
