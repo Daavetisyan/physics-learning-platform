@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 286 52" role="img" aria-labelledby="title desc">
+  <title id="title">Vector Academy</title><desc id="desc">A directional V mark followed by the Vector Academy name.</desc>
+  <path d="M5 7 21 44 41 8" fill="none" stroke="#101f3d" stroke-width="7" stroke-linecap="square"/>
+  <path d="m33 8 10-2-3 10" fill="none" stroke="#ef642f" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/>
+  <text x="58" y="34" fill="#101f3d" font-family="Inter,system-ui,sans-serif" font-size="25" font-weight="800" letter-spacing="-1">Vector</text>
+  <text x="137" y="34" fill="#ef642f" font-family="Inter,system-ui,sans-serif" font-size="25" font-weight="800" letter-spacing="-1">Academy</text>
+</svg>

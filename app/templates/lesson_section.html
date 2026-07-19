@@ -19,9 +19,17 @@
     </div>
 
     <nav class="lesson-step-list" aria-label="Lesson sections">
+      {% set nav = namespace(group='') %}
       {% for step in steps %}
+      {% if step.group != nav.group %}
+      {% if nav.group %}</div>{% endif %}
+      <div class="lesson-step-group" data-group="{{ step.group|lower }}">
+        <h3>{{ step.group }}</h3>
+        {% set nav.group = step.group %}
+      {% endif %}
       <a href="/lesson/{{ lesson.slug }}/{{ step.key }}"
-         class="lesson-step-link {% if step.key == current_step.key %}active{% endif %} {% if step.group == 'Theory' %}theory-step-link{% endif %}">
+         class="lesson-step-link {% if step.key == current_step.key %}active{% endif %}"
+         {% if step.key == current_step.key %}aria-current="step"{% endif %}>
         <span class="lesson-step-number">{{ "%02d"|format(loop.index) }}</span>
         <span class="lesson-step-copy">
           <small>{{ step.group }}</small>
@@ -29,6 +37,7 @@
         </span>
       </a>
       {% endfor %}
+      </div>
     </nav>
   </aside>
 
@@ -217,7 +226,7 @@
     {% elif current_step.key == "assistant" %}
     <section class="lesson-step-body">
       <div class="ai-card">
-        <div class="scientist-panel"><div class="scientist-avatar">{{ content.scientist.initials }}</div><strong>{{ content.scientist.name }}</strong><small>{{ content.scientist.subtitle }}</small><p>“{{ content.scientist.opening }}”</p></div>
+        <div class="scientist-panel"><div class="scientist-avatar"><img src="{{ url_for('static', path='brand/galileo-guide.svg') }}" alt="Illustrated portrait representing the Galileo AI educational guide"></div><strong>{{ content.scientist.name }}</strong><small>{{ content.scientist.subtitle }} · AI educational guide</small><p>“{{ content.scientist.opening }}”</p></div>
         <div class="chat-panel">
           <div class="mode-row"><button class="mode active" data-mode="explain">Explain</button><button class="mode" data-mode="guide">Guide me</button><button class="mode" data-mode="check">Check my work</button></div>
           <div id="chatMessages" class="chat-messages"><div class="bot-message">Ask about reference points, origins, coordinates, signs, relative position, or frames of reference. You can also paste your calculation.</div></div>

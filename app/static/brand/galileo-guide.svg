@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Galileo guide illustration</title><desc id="desc">An original stylized portrait used to represent an AI physics guide.</desc>
+  <path fill="#d9f4fa" d="M0 0h160v160H0z"/>
+  <path fill="#101f3d" d="M24 160c3-30 24-46 56-46s53 16 56 46H24Z"/>
+  <path fill="#f3c79f" d="M53 96h54v35c-7 10-47 10-54 0V96Z"/>
+  <path fill="#f6d2ad" d="M42 58c0-34 76-34 76 0v27c0 29-17 44-38 44S42 114 42 85V58Z"/>
+  <path fill="#fff8eb" d="M39 67c5-12 12-15 18-18 9 9 37 10 55-1 7 7 9 15 9 26-2 30-15 59-41 59S42 108 39 67Z"/>
+  <path fill="#101f3d" d="M38 65c0-31 18-47 43-47 26 0 44 18 42 52-8-8-12-19-13-29-13 11-45 17-63 7-1 8-4 14-9 17Z"/>
+  <path d="M56 78c7-5 14-5 21 0m7 0c7-5 14-5 21 0" fill="none" stroke="#101f3d" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="67" cy="82" r="3" fill="#101f3d"/><circle cx="94" cy="82" r="3" fill="#101f3d"/>
+  <path d="M80 84v15h7m-26 4c11 12 28 12 39 0" fill="none" stroke="#bd7658" stroke-width="3" stroke-linecap="round"/>
+  <path d="M50 98c5 29 19 39 30 39s25-10 30-39c-8 13-18 17-30 17s-22-4-30-17Z" fill="#eef3f4"/>
+  <path d="M61 105c11 7 27 7 38 0" fill="none" stroke="#101f3d" stroke-width="3" stroke-linecap="round"/>
+  <path d="M50 129 33 160h94l-18-31-29 18-30-18Z" fill="#eef3f4"/>
+  <path d="m80 147-8 13h16l-8-13Z" fill="#ef642f"/>
+</svg>
