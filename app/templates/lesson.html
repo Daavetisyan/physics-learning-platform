@@ -304,16 +304,7 @@
     <section id="homework" class="lesson-section">
       <span class="eyebrow">HOMEWORK INVESTIGATION</span>
       <h2>{{ content.homework.title }}</h2>
-      <div class="homework-card expanded-homework">
-        <p>{{ content.homework.instructions }}</p>
-        <ol>{% for question in content.homework.questions %}<li>{{ question }}</li>{% endfor %}</ol>
-        <textarea id="homeworkAnswer" rows="14" placeholder="{{ content.homework.submission_prompt }}"></textarea>
-        <div class="homework-actions">
-          <span>Minimum submission: definitions, three coordinates, two calculations, and written interpretations.</span>
-          <button id="submitHomework" class="button primary">Submit homework</button>
-        </div>
-        <p id="homeworkResult" aria-live="polite"></p>
-      </div>
+      <div class="lesson-homework-card"><div class="lesson-homework-icon" aria-hidden="true">↗</div><div class="lesson-homework-copy"><span class="eyebrow">HOMEWORK ASSIGNED</span><h3>Continue in your homework workspace</h3><p>Assignments, saved answers, submission status, and feedback are managed separately from the lesson.</p></div><a class="button primary" href="/homework">Open homework</a></div>
     </section>
 
     <section id="summary" class="lesson-section">

@@ -235,22 +235,6 @@ function setupChat() {
   }
 }
 
-function setupHomework() {
-  const button = document.getElementById('submitHomework');
-  if (!button) return;
-  button.addEventListener('click', async () => {
-    const answer = document.getElementById('homeworkAnswer').value;
-    const result = document.getElementById('homeworkResult');
-    const response = await fetch(`/api/homework/${window.LESSON_SLUG}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answer }),
-    });
-    const data = await response.json();
-    setFeedback(result, data.message, response.ok);
-  });
-}
-
 function setupLessonCompletion() {
   const button = document.getElementById('completeLesson');
   if (!button) return;
@@ -338,6 +322,5 @@ setupCheckpointCards();
 setupPositionSimulation();
 setupQuiz();
 setupChat();
-setupHomework();
 setupLessonCompletion();
 setupLessonNavigationPosition();

@@ -9,12 +9,30 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from .content import COURSE, LESSONS
 from .lesson_content import LESSON_CONTENTS
 from .database import Base, SessionLocal, engine
-from .models import HomeworkSubmission, Lesson, Progress, Student, TutorSession
+from .homework import (
+    ACTIVE_STATUSES,
+    effective_status,
+    grade_answer,
+    homework_summary,
+    homework_view,
+    parse_options,
+    seed_homework,
+)
+from .models import (
+    HomeworkAnswer,
+    HomeworkAssignment,
+    HomeworkAttempt,
+    LegacyHomeworkSubmission,
+    Lesson,
+    Progress,
+    Student,
+    TutorSession,
+)
 from .services.ai_scientist import answer_as_scientist
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -70,6 +88,7 @@ def seed_database(db: Session) -> None:
         if not progress:
             db.add(Progress(student_id=student.id, lesson_id=first_lesson.id, status="in_progress", score=None))
     db.commit()
+    seed_homework(db, student)
 
 
 def initialize_database() -> None:
@@ -146,6 +165,20 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
     sessions = db.scalars(
         select(TutorSession).where(TutorSession.student_id == student.id).order_by(TutorSession.starts_at)
     ).all()
+    assignments = db.scalars(
+        select(HomeworkAssignment)
+        .options(selectinload(HomeworkAssignment.lesson), selectinload(HomeworkAssignment.questions))
+        .order_by(HomeworkAssignment.due_date)
+    ).all()
+    attempts = db.scalars(
+        select(HomeworkAttempt)
+        .where(HomeworkAttempt.student_id == student.id)
+        .options(selectinload(HomeworkAttempt.answers))
+    ).all()
+    attempt_map = {attempt.homework_id: attempt for attempt in attempts}
+    homework_items = [homework_view(item, attempt_map.get(item.id)) for item in assignments]
+    active_homework = [item for item in homework_items if item["status"] in ACTIVE_STATUSES][:3]
+    homework_stats = homework_summary(homework_items)
     return templates.TemplateResponse(
         "dashboard.html",
         {
@@ -157,6 +190,8 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
             "progress_percent": percent,
             "sessions": sessions,
             "production_slugs": set(LESSON_CONTENTS),
+            "upcoming_homework": active_homework,
+            "homework_stats": homework_stats,
         },
     )
 
@@ -233,6 +268,23 @@ def lesson_section_page(lesson_slug: str, section_key: str, request: Request, db
 
     student = demo_student(db)
     progress = db.scalar(select(Progress).where(Progress.student_id == student.id, Progress.lesson_id == lesson.id))
+    homework_assignment = db.scalar(
+        select(HomeworkAssignment)
+        .where(HomeworkAssignment.lesson_id == lesson.id)
+        .options(selectinload(HomeworkAssignment.questions))
+    )
+    homework_attempt = None
+    homework_card = None
+    if homework_assignment:
+        homework_attempt = db.scalar(
+            select(HomeworkAttempt)
+            .where(
+                HomeworkAttempt.homework_id == homework_assignment.id,
+                HomeworkAttempt.student_id == student.id,
+            )
+            .options(selectinload(HomeworkAttempt.answers))
+        )
+        homework_card = homework_view(homework_assignment, homework_attempt)
     return templates.TemplateResponse(
         "lesson_section.html",
         {
@@ -248,6 +300,7 @@ def lesson_section_page(lesson_slug: str, section_key: str, request: Request, db
             "step_index": active_index + 1,
             "step_percent": round(100 * (active_index + 1) / len(steps)),
             "chapter": chapter,
+            "homework_card": homework_card,
         },
     )
 
@@ -271,7 +324,7 @@ def update_progress(lesson_slug: str, request_data: dict, db: Session = Depends(
 
 
 @app.post("/api/homework/{lesson_slug}")
-def submit_homework(lesson_slug: str, request_data: dict, db: Session = Depends(get_db)):
+def submit_legacy_homework(lesson_slug: str, request_data: dict, db: Session = Depends(get_db)):
     lesson = db.scalar(select(Lesson).where(Lesson.slug == lesson_slug))
     if not lesson:
         raise HTTPException(status_code=404, detail="Lesson not found")
@@ -279,10 +332,181 @@ def submit_homework(lesson_slug: str, request_data: dict, db: Session = Depends(
     if len(answer) < 10:
         return JSONResponse({"ok": False, "message": "Please show more of your reasoning before submitting."}, status_code=400)
     student = demo_student(db)
-    submission = HomeworkSubmission(student_id=student.id, lesson_id=lesson.id, answer=answer)
+    submission = LegacyHomeworkSubmission(student_id=student.id, lesson_id=lesson.id, answer=answer)
     db.add(submission)
     db.commit()
     return {"ok": True, "message": "Homework submitted. Your tutor can review it from the teaching dashboard."}
+
+
+def homework_records(db: Session, student: Student) -> tuple[list[HomeworkAssignment], dict[int, HomeworkAttempt]]:
+    assignments = db.scalars(
+        select(HomeworkAssignment)
+        .options(selectinload(HomeworkAssignment.lesson), selectinload(HomeworkAssignment.questions))
+        .order_by(HomeworkAssignment.due_date)
+    ).all()
+    attempts = db.scalars(
+        select(HomeworkAttempt)
+        .where(HomeworkAttempt.student_id == student.id)
+        .options(selectinload(HomeworkAttempt.answers))
+    ).all()
+    return list(assignments), {attempt.homework_id: attempt for attempt in attempts}
+
+
+@app.get("/homework", response_class=HTMLResponse)
+def homework_dashboard(request: Request, db: Session = Depends(get_db)):
+    student = demo_student(db)
+    assignments, attempt_map = homework_records(db, student)
+    items = [homework_view(item, attempt_map.get(item.id)) for item in assignments]
+    sections = {
+        "assigned": [item for item in items if item["status"] in ACTIVE_STATUSES and item["assignment"].due_date <= datetime.now() + timedelta(days=7)],
+        "upcoming": [item for item in items if item["status"] in ACTIVE_STATUSES and item["assignment"].due_date > datetime.now() + timedelta(days=7)],
+        "submitted": [item for item in items if item["status"] == "submitted"],
+        "completed": [item for item in items if item["status"] == "completed"],
+    }
+    return templates.TemplateResponse(
+        "homework_dashboard.html",
+        {"request": request, "student": student, "sections": sections, "summary": homework_summary(items)},
+    )
+
+
+def get_assignment(db: Session, homework_id: int) -> HomeworkAssignment:
+    assignment = db.scalar(
+        select(HomeworkAssignment)
+        .where(HomeworkAssignment.id == homework_id)
+        .options(selectinload(HomeworkAssignment.lesson), selectinload(HomeworkAssignment.questions))
+    )
+    if not assignment:
+        raise HTTPException(status_code=404, detail="Homework assignment not found")
+    return assignment
+
+
+def get_attempt(db: Session, homework_id: int, student_id: int) -> HomeworkAttempt | None:
+    return db.scalar(
+        select(HomeworkAttempt)
+        .where(HomeworkAttempt.homework_id == homework_id, HomeworkAttempt.student_id == student_id)
+        .options(selectinload(HomeworkAttempt.answers))
+    )
+
+
+def workspace_context(request: Request, assignment: HomeworkAssignment, attempt: HomeworkAttempt | None, error: str | None = None) -> dict:
+    answer_map = {answer.question_id: answer for answer in attempt.answers} if attempt else {}
+    questions = [
+        {"question": question, "options": parse_options(question), "answer": answer_map.get(question.id)}
+        for question in assignment.questions
+    ]
+    return {
+        "request": request,
+        "assignment": assignment,
+        "attempt": attempt,
+        "questions": questions,
+        "progress": homework_view(assignment, attempt)["progress"],
+        "status": effective_status(assignment, attempt),
+        "error": error,
+    }
+
+
+@app.get("/homework/{homework_id}", response_class=HTMLResponse)
+def homework_workspace(homework_id: int, request: Request, db: Session = Depends(get_db)):
+    student = demo_student(db)
+    assignment = get_assignment(db, homework_id)
+    attempt = get_attempt(db, homework_id, student.id)
+    if attempt and attempt.status in {"submitted", "completed"}:
+        return RedirectResponse(url=f"/homework/{homework_id}/results", status_code=303)
+    error = "Complete every required answer and unit before submitting." if request.query_params.get("error") == "required" else None
+    return templates.TemplateResponse("homework_workspace.html", workspace_context(request, assignment, attempt, error))
+
+
+def save_homework_answers(db: Session, assignment: HomeworkAssignment, attempt: HomeworkAttempt, form: dict) -> list[int]:
+    existing = {answer.question_id: answer for answer in attempt.answers}
+    missing: list[int] = []
+    for question in assignment.questions:
+        answer_text = str(form.get(f"answer_{question.id}", "")).strip()
+        unit = str(form.get(f"unit_{question.id}", "")).strip() or None
+        answer = existing.get(question.id)
+        if not answer:
+            answer = HomeworkAnswer(attempt=attempt, question=question)
+            db.add(answer)
+        answer.answer_text = answer_text
+        answer.unit = unit
+        answer.numerical_value = None
+        answer.is_correct = None
+        answer.points_awarded = None
+        answer.feedback = ""
+        if question.required and (not answer_text or (question.question_type == "numerical" and not unit)):
+            missing.append(question.id)
+    return missing
+
+
+async def homework_form(request: Request) -> dict[str, str]:
+    form = await request.form()
+    return {str(key): str(value) for key, value in form.multi_items()}
+
+
+@app.post("/homework/{homework_id}/save")
+async def save_homework(homework_id: int, request: Request, db: Session = Depends(get_db)):
+    student = demo_student(db)
+    assignment = get_assignment(db, homework_id)
+    attempt = get_attempt(db, homework_id, student.id)
+    if attempt and attempt.status in {"submitted", "completed"}:
+        raise HTTPException(status_code=409, detail="Submitted homework cannot be changed")
+    if not attempt:
+        attempt = HomeworkAttempt(homework_id=homework_id, student_id=student.id, status="in_progress", started_at=datetime.now())
+        db.add(attempt)
+        db.flush()
+    form = await homework_form(request)
+    save_homework_answers(db, assignment, attempt, form)
+    if attempt.status != "needs_revision":
+        attempt.status = "in_progress"
+    db.commit()
+    return RedirectResponse(url=f"/homework/{homework_id}?saved=1", status_code=303)
+
+
+@app.post("/homework/{homework_id}/submit")
+async def submit_homework(homework_id: int, request: Request, db: Session = Depends(get_db)):
+    student = demo_student(db)
+    assignment = get_assignment(db, homework_id)
+    attempt = get_attempt(db, homework_id, student.id)
+    if attempt and attempt.status in {"submitted", "completed"}:
+        return RedirectResponse(url=f"/homework/{homework_id}/results", status_code=303)
+    if not attempt:
+        attempt = HomeworkAttempt(homework_id=homework_id, student_id=student.id, status="in_progress", started_at=datetime.now())
+        db.add(attempt)
+        db.flush()
+    form = await homework_form(request)
+    missing = save_homework_answers(db, assignment, attempt, form)
+    if missing:
+        db.commit()
+        return RedirectResponse(url=f"/homework/{homework_id}?error=required", status_code=303)
+    db.flush()
+    answer_map = {answer.question_id: answer for answer in attempt.answers}
+    auto_questions = [question for question in assignment.questions if question.question_type != "written"]
+    for question in assignment.questions:
+        grade_answer(question, answer_map[question.id])
+    earned = sum((answer_map[question.id].points_awarded or 0) for question in auto_questions)
+    available = sum(question.points for question in auto_questions)
+    attempt.score = round(100 * earned / available) if available else None
+    attempt.max_score = 100
+    attempt.submitted_at = datetime.now()
+    attempt.status = "submitted"
+    attempt.feedback_status = "awaiting_review" if any(q.question_type == "written" for q in assignment.questions) else "feedback_ready"
+    attempt.feedback = "Written responses are awaiting teacher or tutor review." if attempt.feedback_status == "awaiting_review" else "Automatic grading complete."
+    db.commit()
+    return RedirectResponse(url=f"/homework/{homework_id}/results?submitted=1", status_code=303)
+
+
+@app.get("/homework/{homework_id}/results", response_class=HTMLResponse)
+def homework_results(homework_id: int, request: Request, db: Session = Depends(get_db)):
+    student = demo_student(db)
+    assignment = get_assignment(db, homework_id)
+    attempt = get_attempt(db, homework_id, student.id)
+    if not attempt or attempt.status not in {"submitted", "needs_revision", "completed"}:
+        return RedirectResponse(url=f"/homework/{homework_id}", status_code=303)
+    answer_map = {answer.question_id: answer for answer in attempt.answers}
+    results = [{"question": question, "answer": answer_map.get(question.id)} for question in assignment.questions]
+    return templates.TemplateResponse(
+        "homework_results.html",
+        {"request": request, "assignment": assignment, "attempt": attempt, "results": results, "submitted": request.query_params.get("submitted") == "1"},
+    )
 
 
 @app.post("/api/ai-chat")
@@ -339,7 +563,7 @@ def book_tutor(
 
 @app.get("/admin", response_class=HTMLResponse)
 def admin_page(request: Request, db: Session = Depends(get_db)):
-    submissions = db.scalars(select(HomeworkSubmission).order_by(HomeworkSubmission.submitted_at.desc())).all()
+    submissions = db.scalars(select(LegacyHomeworkSubmission).order_by(LegacyHomeworkSubmission.submitted_at.desc())).all()
     sessions = db.scalars(select(TutorSession).order_by(TutorSession.starts_at)).all()
     return templates.TemplateResponse(
         "admin.html",

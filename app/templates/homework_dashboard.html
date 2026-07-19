@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Homework · Vector Academy{% endblock %}
+{% block content %}
+<section class="page-shell homework-hero">
+  <span class="eyebrow">HOMEWORK</span>
+  <div class="homework-hero-copy"><div><h1>Keep your work moving.</h1><p>Assignments, saved progress, submissions, and feedback in one place.</p></div><div class="homework-direction" aria-hidden="true">→</div></div>
+  <div class="homework-summary" aria-label="Homework summary">
+    <div><strong>{{ summary.active }}</strong><span>Active assignments</span></div>
+    <div><strong>{{ summary.due_this_week }}</strong><span>Due this week</span></div>
+    <div><strong>{{ summary.awaiting_feedback }}</strong><span>Awaiting feedback</span></div>
+    <div><strong>{% if summary.average_score is not none %}{{ summary.average_score }}%{% else %}—{% endif %}</strong><span>Average score</span></div>
+  </div>
+</section>
+
+<section class="page-shell homework-sections">
+  <nav class="homework-tabs" aria-label="Homework sections">
+    <a href="#assigned">Assigned <span>{{ sections.assigned|length }}</span></a>
+    <a href="#upcoming">Upcoming <span>{{ sections.upcoming|length }}</span></a>
+    <a href="#submitted">Submitted <span>{{ sections.submitted|length }}</span></a>
+    <a href="#completed">Completed <span>{{ sections.completed|length }}</span></a>
+  </nav>
+  {% for key, label in [('assigned', 'Assigned'), ('upcoming', 'Upcoming'), ('submitted', 'Submitted'), ('completed', 'Completed')] %}
+  <section id="{{ key }}" class="homework-section-block">
+    <div class="section-title"><div><span class="eyebrow">{{ label|upper }}</span><h2>{{ label }}</h2></div><span class="section-count">{{ sections[key]|length }} assignment{% if sections[key]|length != 1 %}s{% endif %}</span></div>
+    {% if sections[key] %}
+    <div class="homework-card-list">
+      {% for item in sections[key] %}
+      <article class="homework-assignment-card">
+        <div class="homework-card-main">
+          <div class="homework-card-heading"><span class="homework-status status-{{ item.status }}">{{ item.status_label }}</span><span class="assigned-by">Assigned by {{ item.assignment.assigned_by }}</span></div>
+          <h3>{{ item.assignment.title }}</h3>
+          <p>{{ item.course_title }} <span aria-hidden="true">→</span> {{ item.assignment.lesson.title }}</p>
+          <div class="homework-meta"><span>Due {{ item.assignment.due_date.strftime('%b %d, %Y') }}</span><span>{{ item.assignment.estimated_minutes }} min</span><span>{{ item.feedback_status }}</span>{% if item.attempt and item.attempt.score is not none %}<span class="homework-score">Score {{ item.attempt.score|round|int }}%</span>{% endif %}</div>
+        </div>
+        <div class="homework-card-progress"><div><span>Progress</span><strong>{{ item.progress }}%</strong></div><div class="bar" aria-label="{{ item.progress }} percent complete"><span style="width:{{ item.progress }}%"></span></div></div>
+        <a class="button {% if item.status in ['assigned', 'in_progress', 'overdue', 'needs_revision'] %}primary{% else %}secondary{% endif %} small" href="{{ item.href }}">{{ item.action }}</a>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}<div class="empty-state">No homework in this section.</div>{% endif %}
+  </section>
+  {% endfor %}
+</section>
+{% endblock %}

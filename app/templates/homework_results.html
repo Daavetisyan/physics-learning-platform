@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Results · {{ assignment.title }}{% endblock %}
+{% block content %}
+<section class="page-shell homework-results-hero">
+  <a href="/homework">← All homework</a>
+  {% if submitted %}<div class="submission-confirmation" role="status"><strong>Homework submitted</strong><span>Your answers are saved. Written responses are now awaiting review.</span></div>{% endif %}
+  <span class="eyebrow">SUBMISSION REVIEW</span><h1>{{ assignment.title }}</h1><p>{{ assignment.lesson.title }} · Submitted {{ attempt.submitted_at.strftime('%B %d, %Y at %I:%M %p') if attempt.submitted_at else 'Not submitted' }}</p>
+  <div class="results-summary"><div><strong>{% if attempt.score is not none %}{{ attempt.score|round|int }}%{% else %}—{% endif %}</strong><span>Automatically graded score</span></div><div><strong>{{ attempt.feedback_status.replace('_', ' ')|title }}</strong><span>Feedback status</span></div><div><strong>{{ attempt.status.replace('_', ' ')|title }}</strong><span>Submission status</span></div></div>
+  {% if attempt.feedback %}<div class="teacher-feedback"><span>TEACHER OR TUTOR FEEDBACK</span><p>{{ attempt.feedback }}</p></div>{% endif %}
+</section>
+<section class="page-shell homework-result-list">
+  {% for item in results %}
+  {% set q = item.question %}{% set answer = item.answer %}
+  <article class="homework-result-card {% if answer and answer.is_correct == true %}result-correct{% elif answer and answer.is_correct == false %}result-incorrect{% else %}result-awaiting{% endif %}">
+    <div class="result-heading"><span>{{ "%02d"|format(loop.index) }}</span><div><small>{% if answer and answer.is_correct == true %}CORRECT{% elif answer and answer.is_correct == false %}REVIEW NEEDED{% else %}AWAITING REVIEW{% endif %}</small><h2>{{ q.prompt }}</h2></div></div>
+    <div class="result-answer"><span>YOUR ANSWER</span><p>{{ answer.answer_text if answer and answer.answer_text else 'No answer' }}{% if answer and answer.unit %} {{ answer.unit }}{% endif %}</p></div>
+    {% if q.question_type != 'written' %}<div class="result-explanation"><span>CORRECT ANSWER AND EXPLANATION</span><p><strong>{{ q.correct_answer }}{% if q.expected_unit %} {{ q.expected_unit }}{% endif %}</strong> — {{ q.explanation }}</p></div>{% else %}<div class="result-explanation awaiting"><span>REVIEW GUIDE</span><p>{{ q.explanation }} Your response has not been automatically marked correct or incorrect.</p></div>{% endif %}
+  </article>
+  {% endfor %}
+  {% if attempt.status == 'needs_revision' %}<a class="button primary" href="/homework/{{ assignment.id }}">Revise homework</a>{% endif %}
+</section>
+{% endblock %}

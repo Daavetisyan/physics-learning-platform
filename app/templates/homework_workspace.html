@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ assignment.title }} · Homework{% endblock %}
+{% block content %}
+<div class="homework-workspace-shell">
+  <aside class="homework-workspace-sidebar">
+    <a href="/homework">← All homework</a>
+    <span class="eyebrow">ASSIGNMENT</span>
+    <h1>{{ assignment.title }}</h1>
+    <p><a href="/lesson/{{ assignment.lesson.slug }}">{{ assignment.lesson.title }}</a></p>
+    <dl class="homework-facts"><div><dt>Due</dt><dd>{{ assignment.due_date.strftime('%B %d at %I:%M %p') }}</dd></div><div><dt>Estimated</dt><dd>{{ assignment.estimated_minutes }} minutes</dd></div><div><dt>Status</dt><dd>{{ status.replace('_', ' ')|title }}</dd></div></dl>
+    <div class="workspace-progress"><div><span>Assignment progress</span><strong id="workspaceProgressValue">{{ progress }}%</strong></div><div class="bar"><span id="workspaceProgressBar" style="width:{{ progress }}%"></span></div></div>
+    <nav class="question-navigation" aria-label="Homework questions">
+      {% for item in questions %}<button type="button" class="question-nav-button {% if loop.first %}active{% endif %}" data-question-target="{{ loop.index0 }}" aria-label="Go to question {{ loop.index }}">{{ loop.index }}</button>{% endfor %}
+    </nav>
+  </aside>
+
+  <main class="homework-workspace-main">
+    <header class="workspace-header"><div><span class="eyebrow">{{ assignment.lesson.unit|upper }}</span><h2>{{ assignment.title }}</h2><p>{{ assignment.instructions }}</p></div><span class="workspace-saved" id="workspaceSaved" aria-live="polite">{% if request.query_params.get('saved') %}Progress saved{% endif %}</span></header>
+    {% if error %}<div class="form-alert error" role="alert">{{ error }}</div>{% endif %}
+    <aside class="homework-reference" aria-label="Formula and reference area"><span>REFERENCE</span><p>{{ assignment.reference_text }}</p></aside>
+
+    <form id="homeworkForm" method="post" action="/homework/{{ assignment.id }}/save">
+      <div class="homework-problems">
+        {% for item in questions %}
+        {% set q = item.question %}
+        {% set answer = item.answer %}
+        <section class="homework-problem {% if loop.first %}active{% endif %}" data-question-index="{{ loop.index0 }}" data-required="{{ 'true' if q.required else 'false' }}">
+          <div class="problem-heading"><span class="problem-number">{{ "%02d"|format(loop.index) }}</span><div><small>{{ q.question_type.replace('_', ' ')|upper }} · {{ q.points|round|int }} POINT{% if q.points != 1 %}S{% endif %}</small><h3>{{ q.prompt }}</h3></div></div>
+          <div class="problem-answer">
+            {% if q.question_type == 'multiple_choice' %}
+            <div class="homework-options" role="radiogroup" aria-label="Answer choices for question {{ loop.index }}">
+              {% for option in item.options %}<label><input type="radio" name="answer_{{ q.id }}" value="{{ option }}" {% if answer and answer.answer_text == option %}checked{% endif %}><span>{{ option }}</span></label>{% endfor %}
+            </div>
+            {% elif q.question_type == 'numerical' %}
+            <div class="numerical-answer"><label>Numerical value<input type="number" step="any" inputmode="decimal" name="answer_{{ q.id }}" value="{{ answer.answer_text if answer else '' }}"></label><label>Unit<input type="text" name="unit_{{ q.id }}" value="{{ answer.unit if answer and answer.unit else '' }}" autocomplete="off"></label></div>
+            {% else %}
+            <label class="written-answer">Your explanation<textarea name="answer_{{ q.id }}" rows="7">{{ answer.answer_text if answer else '' }}</textarea></label>
+            {% endif %}
+          </div>
+          {% if q.hint %}<details class="homework-hint"><summary>Show a hint</summary><p>{{ q.hint }}</p></details>{% endif %}
+        </section>
+        {% endfor %}
+      </div>
+      <div class="problem-controls"><button type="button" class="button secondary" id="previousProblem">← Previous problem</button><span id="problemPosition" aria-live="polite">Question 1 of {{ questions|length }}</span><button type="button" class="button secondary" id="nextProblem">Next problem →</button></div>
+      <div class="workspace-actions"><button type="submit" class="button secondary" formaction="/homework/{{ assignment.id }}/save">Save progress</button><button type="submit" class="button primary" id="submitHomeworkWorkspace" formaction="/homework/{{ assignment.id }}/submit">Submit homework</button></div>
+    </form>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', path='js/homework.js') }}"></script>{% endblock %}

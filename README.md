@@ -31,6 +31,7 @@ Other lessons remain visible in the course map but are intentionally marked as n
 - Persistent lesson progress in SQLite
 - Browser voice input when supported
 - Homework submission and creator review
+- Dedicated homework dashboard, resumable assignment workspace, automatic grading, and feedback review
 - Tutor booking with simulated payment and demo Google Meet link
 - Focused lesson player with one section or theory chapter per page
 - Persistent sidebar navigation, section progress, and Previous/Continue controls
@@ -61,6 +62,35 @@ uvicorn app.main:app --reload --port 8000
 ```
 
 Open `http://127.0.0.1:8000` and select **Lesson 1: Position and Reference Points**. The lesson now opens as a sequence of focused sections rather than one extremely long page.
+
+The application command is:
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+## Homework workflow
+
+Homework is connected to lessons without placing a large answer form inside the lesson player:
+
+1. The lesson's Homework step shows a compact assignment card.
+2. `/homework` lists Assigned, Upcoming, Submitted, and Completed work with deadlines, progress, scores, and feedback status.
+3. `/homework/{homework_id}` opens the focused problem workspace. **Save progress** persists incomplete answers without submitting.
+4. `POST /homework/{homework_id}/submit` validates required answers, grades multiple-choice and numerical questions, and leaves written responses awaiting human review.
+5. `/homework/{homework_id}/results` shows submitted answers, objective grading explanations, tutor feedback, and revision status.
+
+The demo student receives four seeded assignments so each dashboard section is visible. Overdue status is derived from the due date for work that is still assigned or in progress.
+
+### Homework data structure
+
+SQLite stores homework in four normalized tables:
+
+- `homework_assignments`: lesson relationship, instructions, due date, estimated time, assigner, and base status.
+- `homework_questions`: ordered multiple-choice, numerical, or written questions. Numerical questions can include units, tolerance, and significant-figure requirements.
+- `homework_attempts`: one resumable assignment attempt per student, including submission state, score, timestamps, and overall feedback.
+- `homework_answers`: each saved response, unit, grading state, points, feedback, and save timestamp.
+
+The former `homework_submissions` table is retained for compatibility with existing prototype data. Startup uses SQLAlchemy's `create_all` as a lightweight additive migration and idempotently seeds missing demo assignments; it does not delete existing records.
 
 ## Update an existing local copy
 

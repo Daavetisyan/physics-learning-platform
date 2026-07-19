@@ -17,6 +17,22 @@
     <span class="eyebrow">TUTOR SUPPORT</span><h2>{% if sessions %}{{ sessions|length }} booked{% else %}No sessions yet{% endif %}</h2><p>Get targeted help based on your lesson history.</p><a href="/tutoring">Book a tutor lesson →</a>
   </div>
 </section>
+<section class="page-shell dashboard-homework">
+  <div class="section-title">
+    <div><span class="eyebrow">UPCOMING HOMEWORK</span><h2>Your next assignments</h2><p>{{ homework_stats.due_this_week }} assignment{% if homework_stats.due_this_week != 1 %}s{% endif %} {% if homework_stats.due_this_week == 1 %}is{% else %}are{% endif %} due this week.</p></div>
+    <a href="/homework">View all homework</a>
+  </div>
+  {% if upcoming_homework %}
+  <div class="dashboard-homework-list">
+    {% for item in upcoming_homework %}
+    <article class="dashboard-homework-card">
+      <div><span class="homework-status status-{{ item.status }}">{{ item.status_label }}</span><h3>{{ item.assignment.title }}</h3><p>{{ item.assignment.due_date.strftime('%a, %b %d') }} · {{ item.progress }}% complete</p></div>
+      <a class="button secondary small" href="{{ item.href }}">{{ item.action }}</a>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}<div class="empty-state">No active homework. Your next assignment will appear here.</div>{% endif %}
+</section>
 <section class="page-shell">
   <div class="section-title"><div><span class="eyebrow">COURSE MAP</span><h2>{{ course.title }}</h2></div><a href="/course/{{ course.slug }}">View full course</a></div>
   <div class="lesson-list">

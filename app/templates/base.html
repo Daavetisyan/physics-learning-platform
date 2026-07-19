@@ -12,9 +12,10 @@
       <img src="{{ url_for('static', path='brand/vector-logo-horizontal.svg') }}" alt="Vector Academy">
     </a>
     <nav aria-label="Primary navigation">
-      <a href="/dashboard">Dashboard</a>
-      <a href="/course/foundations-of-physics">Course</a>
-      <a href="/tutoring">Tutor</a>
+      <a href="/dashboard" {% if request.url.path == '/dashboard' %}class="active" aria-current="page"{% endif %}>Dashboard</a>
+      <a href="/course/foundations-of-physics" {% if request.url.path.startswith('/course') or request.url.path.startswith('/lesson') %}class="active" aria-current="page"{% endif %}>Course</a>
+      <a href="/homework" {% if request.url.path.startswith('/homework') %}class="active" aria-current="page"{% endif %}>Homework</a>
+      <a href="/tutoring" {% if request.url.path.startswith('/tutoring') %}class="active" aria-current="page"{% endif %}>Tutor</a>
     </nav>
   </header>
   <main>{% block content %}{% endblock %}</main>

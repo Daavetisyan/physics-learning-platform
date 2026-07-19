@@ -256,11 +256,20 @@
 
     {% elif current_step.key == "homework" %}
     <section class="lesson-step-body">
-      <div class="homework-card expanded-homework">
-        <h2>{{ content.homework.title }}</h2><p>{{ content.homework.instructions }}</p><ol>{% for question in content.homework.questions %}<li>{{ question }}</li>{% endfor %}</ol>
-        <textarea id="homeworkAnswer" rows="14" placeholder="{{ content.homework.submission_prompt }}"></textarea>
-        <div class="homework-actions"><span>Minimum submission: definitions, three coordinates, two calculations, and written interpretations.</span><button id="submitHomework" class="button primary">Submit homework</button></div><p id="homeworkResult" aria-live="polite"></p>
-      </div>
+      {% if homework_card %}
+      <article class="lesson-homework-card">
+        <div class="lesson-homework-icon" aria-hidden="true">↗</div>
+        <div class="lesson-homework-copy">
+          <span class="eyebrow">HOMEWORK ASSIGNED</span>
+          <h2>{{ homework_card.assignment.title }}</h2>
+          <p>Continue this lesson in a focused assignment workspace. Your answers save independently from the lesson.</p>
+          <div class="homework-meta"><span>Due {{ homework_card.assignment.due_date.strftime('%B %d') }}</span><span>{{ homework_card.assignment.estimated_minutes }} min</span><span class="homework-status status-{{ homework_card.status }}">{{ homework_card.status_label }}</span></div>
+        </div>
+        <a class="button primary" href="/homework/{{ homework_card.assignment.id }}">Open homework</a>
+      </article>
+      {% else %}
+      <div class="empty-state">No homework is assigned for this lesson yet.</div>
+      {% endif %}
     </section>
 
     {% elif current_step.key == "summary" %}
