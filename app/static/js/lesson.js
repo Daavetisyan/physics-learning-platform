@@ -276,9 +276,40 @@ function setupLessonCompletion() {
   });
 }
 
+function revealActiveLessonStep() {
+  const activeStep = document.querySelector('.lesson-step-link[aria-current="step"]');
+  if (!activeStep) return;
+
+  let scrollContainer = activeStep.parentElement;
+  while (scrollContainer && !scrollContainer.classList.contains('lesson-player-nav')) {
+    const style = window.getComputedStyle(scrollContainer);
+    const canScroll = scrollContainer.scrollHeight > scrollContainer.clientHeight
+      && ['auto', 'scroll'].includes(style.overflowY);
+    if (canScroll) break;
+    scrollContainer = scrollContainer.parentElement;
+  }
+
+  if (!scrollContainer) return;
+  const containerRect = scrollContainer.getBoundingClientRect();
+  const activeRect = activeStep.getBoundingClientRect();
+  const isVisible = activeRect.top >= containerRect.top && activeRect.bottom <= containerRect.bottom;
+  if (isVisible) return;
+
+  const centeredTop = scrollContainer.scrollTop
+    + activeRect.top
+    - containerRect.top
+    - scrollContainer.clientHeight / 2
+    + activeRect.height / 2;
+  scrollContainer.scrollTo({
+    top: Math.max(0, centeredTop),
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+  });
+}
+
 setupCheckpointCards();
 setupPositionSimulation();
 setupQuiz();
 setupChat();
 setupHomework();
 setupLessonCompletion();
+revealActiveLessonStep();
