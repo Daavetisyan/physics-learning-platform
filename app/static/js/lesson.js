@@ -33,100 +33,6 @@ function setupCheckpointCards() {
   });
 }
 
-function signed(value) {
-  if (Math.abs(value) < 1e-9) return '0 m';
-  return `${value > 0 ? '+' : ''}${value} m`;
-}
-
-function setupPositionSimulation() {
-  const simulation = document.querySelector('[data-simulation="position-reference-frame"]');
-  if (!simulation) return;
-
-  const objectAInput = document.getElementById('objectAPosition');
-  const objectBInput = document.getElementById('objectBPosition');
-  const referenceSelect = document.getElementById('referenceSelect');
-  const directionSelect = document.getElementById('positiveDirectionSelect');
-  const objectA = document.getElementById('objectA');
-  const objectB = document.getElementById('objectB');
-  const originMarker = document.getElementById('originMarker');
-  const axis = document.getElementById('coordinateAxis');
-
-  function physicalToPercent(value) {
-    return ((value + 10) / 20) * 100;
-  }
-
-  function referencePhysicalPosition(a, b) {
-    if (referenceSelect.value === 'a') return a;
-    if (referenceSelect.value === 'b') return b;
-    return 0;
-  }
-
-  function update() {
-    const a = Number(objectAInput.value);
-    const b = Number(objectBInput.value);
-    const reference = referencePhysicalPosition(a, b);
-    const orientation = directionSelect.value === 'right' ? 1 : -1;
-    const aCoordinate = orientation * (a - reference);
-    const bCoordinate = orientation * (b - reference);
-    const aRelativeToB = orientation * (a - b);
-    const separation = Math.abs(a - b);
-
-    objectA.style.left = `${physicalToPercent(a)}%`;
-    objectB.style.left = `${physicalToPercent(b)}%`;
-    originMarker.style.left = `${physicalToPercent(reference)}%`;
-
-    document.getElementById('objectAPositionLabel').textContent = `${signed(a)} from laboratory zero`;
-    document.getElementById('objectBPositionLabel').textContent = `${signed(b)} from laboratory zero`;
-    document.getElementById('objectAReadout').textContent = signed(aCoordinate);
-    document.getElementById('objectBReadout').textContent = signed(bCoordinate);
-    document.getElementById('relativeAReadout').textContent = signed(aRelativeToB);
-    document.getElementById('separationReadout').textContent = `${separation} m`;
-
-    const referenceName = referenceSelect.value === 'a'
-      ? 'Object A'
-      : referenceSelect.value === 'b'
-        ? 'Object B'
-        : 'The laboratory zero';
-    const directionText = directionSelect.value === 'right' ? 'right' : 'left';
-    document.getElementById('frameExplanation').textContent =
-      `${referenceName} is the displayed origin, and ${directionText} is positive. ` +
-      `The separation remains ${separation} m because changing a coordinate system does not move the objects.`;
-    document.getElementById('negativeDirection').textContent = directionSelect.value === 'right' ? '← Negative' : '← Positive';
-    document.getElementById('positiveDirection').textContent = directionSelect.value === 'right' ? 'Positive →' : 'Negative →';
-  }
-
-  for (let tick = -10; tick <= 10; tick += 2) {
-    const marker = document.createElement('span');
-    marker.className = 'axis-tick';
-    marker.style.left = `${physicalToPercent(tick)}%`;
-    marker.innerHTML = `<i></i><small>${tick}</small>`;
-    axis.appendChild(marker);
-  }
-
-  [objectAInput, objectBInput, referenceSelect, directionSelect].forEach((element) => {
-    element.addEventListener('input', update);
-    element.addEventListener('change', update);
-  });
-  update();
-
-  const prediction = simulation.querySelector('.simulation-prediction');
-  if (prediction) {
-    const correct = prediction.dataset.correct;
-    const explanation = prediction.dataset.explanation || '';
-    const feedback = prediction.querySelector('.simulation-prediction-feedback');
-    prediction.querySelectorAll('.simulation-prediction-option').forEach((button) => {
-      button.addEventListener('click', () => {
-        prediction.querySelectorAll('.simulation-prediction-option').forEach((item) => {
-          item.classList.remove('correct-option', 'incorrect-option');
-        });
-        const isCorrect = button.dataset.answer === correct;
-        button.classList.add(isCorrect ? 'correct-option' : 'incorrect-option');
-        setFeedback(feedback, `${isCorrect ? 'Correct.' : 'Try again.'} ${explanation}`, isCorrect);
-      });
-    });
-  }
-}
-
 let lastQuizScore = window.EXISTING_SCORE === null || window.EXISTING_SCORE === undefined
   ? null
   : Number(window.EXISTING_SCORE);
@@ -319,7 +225,6 @@ function setupLessonNavigationPosition() {
 }
 
 setupCheckpointCards();
-setupPositionSimulation();
 setupQuiz();
 setupChat();
 setupLessonCompletion();

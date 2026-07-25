@@ -156,42 +156,7 @@
     </section>
 
     {% elif current_step.key == "simulation" %}
-    <section class="lesson-step-body">
-      <p class="section-intro">{{ content.simulation.instruction }}</p>
-      <div class="simulation-card position-simulation" data-simulation="position-reference-frame">
-        <div class="position-stage">
-          <div class="axis-direction-label"><span id="negativeDirection">Negative</span><span id="positiveDirection">Positive →</span></div>
-          <div id="coordinateAxis" class="coordinate-axis" aria-label="Coordinate line from negative ten to positive ten meters">
-            <div class="axis-line"></div>
-            <div id="originMarker" class="origin-marker"><span>ORIGIN</span></div>
-            <div id="objectA" class="position-object object-a"><span>A</span></div>
-            <div id="objectB" class="position-object object-b"><span>B</span></div>
-          </div>
-          <div class="position-readouts">
-            <div><small>Object A coordinate</small><strong id="objectAReadout">-3 m</strong></div>
-            <div><small>Object B coordinate</small><strong id="objectBReadout">5 m</strong></div>
-            <div><small>A relative to B</small><strong id="relativeAReadout">-8 m</strong></div>
-            <div><small>Physical separation</small><strong id="separationReadout">8 m</strong></div>
-          </div>
-        </div>
-        <div class="position-controls">
-          <label>Object A physical position<input id="objectAPosition" type="range" min="-10" max="10" step="1" value="-3"><span id="objectAPositionLabel">-3 m from laboratory zero</span></label>
-          <label>Object B physical position<input id="objectBPosition" type="range" min="-10" max="10" step="1" value="5"><span id="objectBPositionLabel">5 m from laboratory zero</span></label>
-          <label>Choose the displayed origin<select id="referenceSelect"><option value="lab">Laboratory zero</option><option value="a">Object A</option><option value="b">Object B</option></select></label>
-          <label>Choose the positive direction<select id="positiveDirectionSelect"><option value="right">Right is positive</option><option value="left">Left is positive</option></select></label>
-        </div>
-        <div class="lab-observation">
-          <strong>Observation guide</strong>
-          <ol><li>Keep both objects fixed and change only the origin. Which values change?</li><li>Reverse the positive direction. What happens to signs and magnitudes?</li><li>Move one object. Which quantities now describe a real physical change?</li></ol>
-          <p id="frameExplanation">The laboratory zero is the origin and right is positive.</p>
-        </div>
-        <div class="prediction-box simulation-prediction" data-correct="{{ content.simulation.prediction_correct }}" data-explanation="{{ content.simulation.prediction_explanation }}">
-          <strong>Prediction challenge</strong><p>{{ content.simulation.prediction }}</p>
-          <div>{% for option in content.simulation.prediction_options %}<button type="button" class="chip simulation-prediction-option" data-answer="{{ option }}">{{ option }}</button>{% endfor %}</div>
-          <p class="simulation-prediction-feedback" aria-live="polite"></p>
-        </div>
-      </div>
-    </section>
+    {% include "partials/relative_position_lab.html" %}
 
     {% elif current_step.key == "examples" %}
     <section class="lesson-step-body">
@@ -303,4 +268,8 @@
   window.EXISTING_SCORE = {{ progress.score if progress and progress.score is not none else 'null' }};
 </script>
 <script src="{{ url_for('static', path='js/lesson.js') }}"></script>
+{% if current_step.key == "simulation" %}
+<script src="{{ url_for('static', path='js/relative-position-physics.js') }}"></script>
+<script src="{{ url_for('static', path='js/relative-position-lab.js') }}"></script>
+{% endif %}
 {% endblock %}

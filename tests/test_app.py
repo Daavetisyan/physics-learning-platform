@@ -37,6 +37,13 @@ def test_landing_and_production_lesson():
     assert "quiz-question-card" in assessment.text
     assert "Which information is required" in assessment.text
 
+    simulation = client.get("/lesson/position-reference-points/simulation")
+    assert simulation.status_code == 200
+    assert "SIMULATION LAB · RELATIVE POSITION" in simulation.text
+    assert "data-relative-position-lab" in simulation.text
+    assert "relative-position-physics.js" in simulation.text
+    assert "relative-position-lab.js" in simulation.text
+
 
 def test_unbuilt_lesson_uses_step_by_step_state():
     lesson = client.get("/lesson/distance-displacement")

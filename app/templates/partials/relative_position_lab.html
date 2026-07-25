@@ -1,0 +1,133 @@
+<section class="lesson-step-body relative-lab-section">
+  <header class="relative-lab-intro">
+    <span class="eyebrow">SIMULATION LAB · RELATIVE POSITION &amp; REFERENCE POINT</span>
+    <h2>Simulation Lab</h2>
+    <p>Walk through the street and compare your position with fixed and moving objects. Change the origin and positive direction to see which numbers change—and which physical relationships do not.</p>
+  </header>
+
+  <div class="relative-position-lab" data-relative-position-lab aria-label="Interactive relative position laboratory">
+    <div class="lab-mission-bar">
+      <div><span>MISSION <strong id="missionNumber">1</strong> OF 7</span><p id="missionText">Stand 3 m to the right of the dog.</p></div>
+      <div class="lab-score"><span>SCORE</span><strong id="labScore">0</strong></div>
+      <button type="button" class="lab-hint-button" id="missionHint" aria-expanded="false">Hint</button>
+    </div>
+    <p class="mission-feedback" id="missionFeedback" aria-live="polite"></p>
+
+    <div class="relative-lab-grid">
+      <div class="relative-scene-column">
+        <div class="street-scene" id="streetScene" role="img" aria-describedby="sceneDescription">
+          <p class="sr-only" id="sceneDescription">A one-dimensional street from negative ten to positive ten meters with a coffee shop, dog, student, cyclist, and ground origin.</p>
+          <div class="scene-sky"><span class="scene-cloud cloud-one"></span><span class="scene-cloud cloud-two"></span></div>
+          <div class="scene-building lab-object" id="buildingObject" data-object="building"><span class="shop-awning"></span><span class="shop-window"></span><strong>VECTOR CAFÉ</strong><small>Building</small></div>
+          <div class="scene-tree tree-one" aria-hidden="true"><span></span></div>
+          <div class="scene-lamp lamp-one" aria-hidden="true"><span></span></div>
+          <div class="scene-bench" aria-hidden="true"></div>
+          <div class="scene-lamp lamp-two" aria-hidden="true"><span></span></div>
+          <div class="scene-dog lab-object" id="dogObject" data-object="dog" aria-label="Stationary dog"><span class="dog-body"></span><span class="dog-head"></span><strong>Dog</strong></div>
+          <div class="scene-player lab-object" id="playerObject" data-object="player" aria-label="You, the student"><span class="player-head"></span><span class="player-body"></span><span class="player-leg leg-left"></span><span class="player-leg leg-right"></span><strong>You</strong></div>
+          <div class="scene-cyclist lab-object" id="cyclistObject" data-object="cyclist" aria-label="Moving cyclist"><span class="bike-wheel wheel-left"></span><span class="bike-wheel wheel-right"></span><span class="bike-frame"></span><span class="rider"></span><strong>Cyclist</strong></div>
+          <div class="street-pavement"><span></span></div>
+          <div class="selected-guide" id="selectedGuide" aria-hidden="true"></div>
+        </div>
+
+        <div class="relative-axis-wrap" aria-label="Coordinate axis from negative ten to positive ten meters">
+          <div class="axis-positive-label" id="axisPositiveLabel">Positive →</div>
+          <div class="relative-axis" id="relativeAxis"></div>
+        </div>
+
+        <div class="touch-movement" aria-label="Player movement controls">
+          <button type="button" id="moveLeft" aria-label="Move player left"><span aria-hidden="true">←</span> Move left <kbd>A</kbd></button>
+          <button type="button" id="moveRight" aria-label="Move player right">Move right <kbd>D</kbd> <span aria-hidden="true">→</span></button>
+        </div>
+
+        <div class="scene-playback">
+          <button type="button" class="icon-control" id="playCyclist" aria-label="Play cyclist movement">▶ <span>Play</span></button>
+          <button type="button" class="icon-control" id="pauseCyclist" aria-label="Pause cyclist movement">Ⅱ <span>Pause</span></button>
+          <button type="button" class="icon-control" id="resetLab" aria-label="Reset complete simulation">↺ <span>Reset</span></button>
+        </div>
+      </div>
+
+      <aside class="relative-control-panel">
+        <section class="lab-control-section">
+          <div class="lab-section-heading"><span>REFERENCE OBJECT</span><small>Select what “relative to” means</small></div>
+          <div class="reference-selector" id="referenceSelector">
+            <button type="button" data-reference="building"><span aria-hidden="true">▥</span><strong>Building</strong></button>
+            <button type="button" data-reference="dog" class="active" aria-pressed="true"><span aria-hidden="true">◆</span><strong>Dog</strong></button>
+            <button type="button" data-reference="cyclist"><span aria-hidden="true">◫</span><strong>Cyclist</strong></button>
+            <button type="button" data-reference="ground"><span aria-hidden="true">⌖</span><strong>Ground origin</strong></button>
+          </div>
+        </section>
+
+        <section class="lab-control-section">
+          <div class="lab-section-heading"><span>COORDINATE SYSTEM</span></div>
+          <label class="lab-select-label">Displayed origin
+            <select id="originPreset">
+              <option value="ground">Ground origin (0 m)</option>
+              <option value="building">Building</option>
+              <option value="dog">Dog</option>
+              <option value="cyclist">Cyclist</option>
+              <option value="custom">Custom position</option>
+            </select>
+          </label>
+          <label class="origin-slider-label">Custom origin <strong id="originSliderValue">0.0 m</strong>
+            <input id="originSlider" type="range" min="-10" max="10" step="0.5" value="0" aria-label="Custom origin position">
+          </label>
+          <div class="direction-toggle" role="group" aria-label="Positive direction">
+            <button type="button" class="active" data-direction="right" aria-pressed="true">Right is positive</button>
+            <button type="button" data-direction="left" aria-pressed="false">Left is positive</button>
+          </div>
+        </section>
+
+        <section class="lab-control-section cyclist-controls">
+          <div class="lab-section-heading"><span>CYCLIST MOTION</span><small id="cyclistMotionStatus">Paused</small></div>
+          <label class="lab-select-label">Speed
+            <select id="cyclistSpeed"><option value="1">Slow · 1 m/s</option><option value="2" selected>Medium · 2 m/s</option><option value="3.5">Fast · 3.5 m/s</option></select>
+          </label>
+        </section>
+
+        <section class="live-measurements" aria-labelledby="liveMeasurementsTitle">
+          <div class="lab-section-heading"><span id="liveMeasurementsTitle">LIVE MEASUREMENTS</span><small>All values update instantly</small></div>
+          <div class="measurement-grid">
+            <div><small>Your coordinate</small><strong id="playerCoordinate">+0.0 m</strong></div>
+            <div><small id="referenceCoordinateLabel">Dog coordinate</small><strong id="referenceCoordinate">−2.0 m</strong></div>
+            <div class="emphasis"><small>Your relative position</small><strong id="relativePositionValue">+2.0 m</strong></div>
+            <div><small>Physical separation</small><strong id="physicalDistanceValue">2.0 m</strong></div>
+            <div><small>Current origin</small><strong id="originValue">0.0 m</strong></div>
+            <div><small>Positive direction</small><strong id="directionValue">Right →</strong></div>
+            <div class="cyclist-velocity-row" id="cyclistVelocityRow"><small>Cyclist velocity</small><strong id="cyclistVelocityValue">0.0 m/s</strong></div>
+          </div>
+          <p class="relative-interpretation" id="relativeInterpretation" aria-live="polite">You are 2.0 m to the right of the dog.</p>
+        </section>
+      </aside>
+    </div>
+
+    <div class="lab-action-row">
+      <button type="button" class="button secondary" id="checkMission">Check mission</button>
+      <span id="missionProgress">0 of 7 missions complete</span>
+    </div>
+  </div>
+
+  <section class="lab-learning-panels">
+    <div class="lab-tabs" role="tablist" aria-label="Simulation learning panels">
+      <button type="button" role="tab" aria-selected="true" aria-controls="explorePanel" id="exploreTab">Explore</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="challengePanel" id="challengeTab">Challenge</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="resultsPanel" id="resultsTab">Results</button>
+    </div>
+    <div class="lab-tab-panel active" id="explorePanel" role="tabpanel" aria-labelledby="exploreTab">
+      <div class="explore-card-grid">
+        <article><span>01</span><h3>Your task</h3><p>Move yourself, choose references, and complete each mission without guessing which number is a distance.</p></article>
+        <article><span>02</span><h3>What to observe</h3><p>Changing the origin changes coordinates. Reversing direction changes signs. Neither action moves an object.</p></article>
+        <article class="quick-reference"><span>03</span><h3>Quick reference</h3><p><i>x</i><sub>relative</sub> = <i>x</i><sub>you</sub> − <i>x</i><sub>reference</sub></p><p><i>d</i> = |<i>x</i><sub>you</sub> − <i>x</i><sub>reference</sub>|</p><p><i>x</i>′ = <i>x</i> − <i>q</i></p></article>
+        <article><span>04</span><h3>Pro tip</h3><p>Say the sign and the physical direction separately: “−3 m relative position, physically 3 m to the left.”</p></article>
+      </div>
+    </div>
+    <div class="lab-tab-panel" id="challengePanel" role="tabpanel" aria-labelledby="challengeTab" hidden>
+      <div class="challenge-summary"><div><strong id="challengeCompleted">0/7</strong><span>Completed</span></div><div><strong id="challengeAttempts">0</strong><span>Attempts</span></div><div><strong id="challengeTime">0:00</strong><span>Time</span></div><div><strong id="challengeAccuracy">—</strong><span>Accuracy</span></div></div>
+      <ol class="challenge-list" id="challengeList"><li>Fixed reference object</li><li>Changed origin</li><li>Signed relative position</li><li>Moving reference object</li><li>Reversed positive direction</li><li>Distance versus position</li><li>Combination tracking challenge</li></ol>
+    </div>
+    <div class="lab-tab-panel" id="resultsPanel" role="tabpanel" aria-labelledby="resultsTab" hidden>
+      <div class="results-lab-grid"><article><small>MISSIONS COMPLETED</small><strong id="resultsCompleted">0</strong></article><article><small>CORRECT ATTEMPTS</small><strong id="resultsCorrect">0</strong></article><article><small>AVERAGE ERROR</small><strong id="resultsError">—</strong></article><article><small>BEST STREAK</small><strong id="resultsStreak">0</strong></article></div>
+      <div class="concept-feedback"><h3>Concepts demonstrated</h3><ul id="conceptList"><li data-concept="relative">Signed relative position</li><li data-concept="distance">Physical separation stays non-negative</li><li data-concept="origin">Changing origin relabels coordinates</li><li data-concept="direction">Positive direction controls signs</li><li data-concept="moving">Moving reference objects update continuously</li></ul><p id="conceptFeedback">Begin with Mission 1. Experiment freely—incorrect attempts do not reduce your score.</p></div>
+    </div>
+  </section>
+</section>

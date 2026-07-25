@@ -254,13 +254,9 @@ POSITION_REFERENCE_POINTS = {
         ],
     },
     "simulation": {
-        "type": "position_reference_frame",
-        "title": "Reference Frame Laboratory",
-        "instruction": "Move two objects, change the reference point, and reverse the positive direction. Watch which values change and which physical relationships stay the same.",
-        "prediction": "If Object A and Object B stay fixed but Object A becomes the new origin, what must Object A's new coordinate be?",
-        "prediction_options": ["Its old coordinate", "0 m", "The separation between A and B"],
-        "prediction_correct": "0 m",
-        "prediction_explanation": "The selected origin is defined to have coordinate zero.",
+        "type": "relative_position_lab",
+        "title": "Relative Position Laboratory",
+        "instruction": "Walk through a street scene, compare your position with fixed and moving objects, and investigate how reference points, origins, and positive direction affect coordinates.",
     },
     "worked_examples": [
         {
