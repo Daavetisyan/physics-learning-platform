@@ -12,57 +12,24 @@
         <div class="street-scene" id="streetScene" role="img" aria-describedby="sceneDescription">
           <p class="sr-only" id="sceneDescription">A one-dimensional street from negative ten to positive ten meters with a coffee shop, dog, student, cyclist, and ground origin.</p>
           <div class="scene-sky"><span class="scene-cloud cloud-one"></span><span class="scene-cloud cloud-two"></span></div>
-          <div class="scene-building lab-object" id="buildingObject" data-object="building"><span class="shop-awning"></span><span class="shop-window"></span><strong>VECTOR CAFÉ</strong><small>Building</small></div>
+          <div class="scene-building lab-object" id="buildingObject" data-object="building" aria-label="Coffee shop building">
+            <img src="/static/simulation/coffee_shop.png" alt="" aria-hidden="true">
+            <small>Building</small>
+          </div>
           <div class="scene-tree tree-one" aria-hidden="true"><span></span></div>
           <div class="scene-lamp lamp-one" aria-hidden="true"><span></span></div>
           <div class="scene-bench" aria-hidden="true"></div>
           <div class="scene-lamp lamp-two" aria-hidden="true"><span></span></div>
-          <div class="scene-dog lab-object" id="dogObject" data-object="dog" aria-label="Stationary brown dog">
-            <svg class="scene-character" viewBox="0 0 92 68" aria-hidden="true">
-              <ellipse class="character-shadow" cx="45" cy="61" rx="34" ry="5"/>
-              <path fill="#8f512f" stroke="#0e1d32" stroke-width="4" stroke-linejoin="round" d="M19 43c-7-1-10-7-8-13 4 4 7 5 12 3"/>
-              <path fill="#c97b3d" stroke="#0e1d32" stroke-width="4" d="M22 28c7-8 33-8 43 1l-3 23H28z"/>
-              <path fill="#9b592f" stroke="#0e1d32" stroke-width="4" stroke-linejoin="round" d="M59 25c4-13 19-14 25-3l-3 23-19 2-7-11z"/>
-              <path fill="#704027" stroke="#0e1d32" stroke-width="3" d="M65 17c-1-8 8-11 13-7l-3 13z"/>
-              <path fill="#d78b49" stroke="#0e1d32" stroke-width="3" d="M77 30l11 4-8 8-8-3z"/>
-              <circle cx="76" cy="25" r="2.5" fill="#0e1d32"/>
-              <path d="M34 49v12M55 49v12" stroke="#0e1d32" stroke-width="6" stroke-linecap="round"/>
-              <path d="M31 61h9M52 61h9" stroke="#0e1d32" stroke-width="4" stroke-linecap="round"/>
-              <path d="M28 31c8 5 18 6 27 1" fill="none" stroke="#edb76e" stroke-width="4" stroke-linecap="round"/>
-            </svg>
+          <div class="scene-dog lab-object" id="dogObject" data-object="dog" aria-label="Stationary dog">
+            <img class="scene-character" src="/static/simulation/standing_dog.png" alt="" aria-hidden="true">
             <strong>Dog</strong>
           </div>
           <div class="scene-player lab-object" id="playerObject" data-object="player" aria-label="You, the student">
-            <svg class="scene-character" viewBox="0 0 66 126" aria-hidden="true">
-              <ellipse class="character-shadow" cx="33" cy="120" rx="25" ry="5"/>
-              <path fill="#152541" stroke="#0e1d32" stroke-width="4" d="M18 25C16 8 47 3 51 25l-4 12H21z"/>
-              <circle cx="34" cy="29" r="16" fill="#a96343" stroke="#0e1d32" stroke-width="4"/>
-              <path fill="#152541" d="M19 24c3-16 29-17 33 0-11 1-19-2-26-7-1 5-3 7-7 7z"/>
-              <circle cx="40" cy="29" r="2" fill="#0e1d32"/>
-              <path d="M39 36c-4 3-8 3-11 0" fill="none" stroke="#713a2a" stroke-width="2" stroke-linecap="round"/>
-              <path fill="#f2673a" stroke="#0e1d32" stroke-width="4" stroke-linejoin="round" d="M17 49l16-8 17 8-2 42H20z"/>
-              <path d="M17 54L8 80M49 54l9 25" stroke="#a96343" stroke-width="8" stroke-linecap="round"/>
-              <path d="M26 89l-4 29M41 89l5 29" stroke="#17304e" stroke-width="10" stroke-linecap="round"/>
-              <path d="M14 119h14M40 119h14" stroke="#0e1d32" stroke-width="7" stroke-linecap="round"/>
-              <path d="M23 54h21" stroke="#ff9a67" stroke-width="3" opacity=".75"/>
-            </svg>
+            <img class="scene-character" src="/static/simulation/walking_student.png" alt="" aria-hidden="true">
             <strong>You</strong>
           </div>
           <div class="scene-cyclist lab-object" id="cyclistObject" data-object="cyclist" aria-label="Moving cyclist">
-            <svg class="scene-character" viewBox="0 0 148 112" aria-hidden="true">
-              <ellipse class="character-shadow" cx="75" cy="105" rx="64" ry="5"/>
-              <circle cx="31" cy="82" r="25" fill="none" stroke="#0e1d32" stroke-width="6"/>
-              <circle cx="117" cy="82" r="25" fill="none" stroke="#0e1d32" stroke-width="6"/>
-              <circle cx="31" cy="82" r="19" fill="none" stroke="#8ea5b8" stroke-width="2"/>
-              <circle cx="117" cy="82" r="19" fill="none" stroke="#8ea5b8" stroke-width="2"/>
-              <path d="M31 82l31-2 22-30 19 32H62L48 55h27" fill="none" stroke="#2bc5dc" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-              <path d="M99 47h17M44 51h14" stroke="#0e1d32" stroke-width="5" stroke-linecap="round"/>
-              <circle cx="82" cy="19" r="13" fill="#a96343" stroke="#0e1d32" stroke-width="4"/>
-              <path fill="#172b49" stroke="#0e1d32" stroke-width="3" d="M68 17C70 2 92 2 97 17l-9-2-7-6-3 8z"/>
-              <path fill="#f2673a" stroke="#0e1d32" stroke-width="4" stroke-linejoin="round" d="M69 35l15-7 18 14-14 25-27-12z"/>
-              <path d="M72 40L50 57M96 42l18 10" stroke="#a96343" stroke-width="7" stroke-linecap="round"/>
-              <path d="M80 62L62 80M89 65l17 16" stroke="#172b49" stroke-width="8" stroke-linecap="round"/>
-            </svg>
+            <img class="scene-character" src="/static/simulation/moving_cyclist.png" alt="" aria-hidden="true">
             <strong>Cyclist</strong>
           </div>
           <div class="street-pavement"><span></span></div>
