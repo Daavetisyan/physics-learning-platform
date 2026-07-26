@@ -39,7 +39,7 @@ def test_landing_and_production_lesson():
 
     simulation = client.get("/lesson/position-reference-points/simulation")
     assert simulation.status_code == 200
-    assert "SIMULATION LAB · RELATIVE POSITION" in simulation.text
+    assert "Stand 3 m to the right of the dog." in simulation.text
     assert "data-relative-position-lab" in simulation.text
     assert "relative-position-physics.js" in simulation.text
     assert "relative-position-lab.js" in simulation.text
