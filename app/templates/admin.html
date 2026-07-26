@@ -1,6 +1,13 @@
 {% extends "base.html" %}
-{% block title %}Creator Dashboard{% endblock %}
+{% block title %}Administration · Vector Academy{% endblock %}
 {% block content %}
-<section class="page-shell course-hero"><span class="eyebrow">CREATOR VIEW</span><h1>Teaching operations</h1><p>A first internal dashboard for homework and tutor-session monitoring.</p></section>
-<section class="page-shell dashboard-grid"><div class="panel wide"><span class="eyebrow">HOMEWORK SUBMISSIONS</span><h2>{{ submissions|length }} received</h2>{% if submissions %}{% for item in submissions %}<div class="admin-record"><strong>Speed and Velocity</strong><p>{{ item.answer }}</p><small>{{ item.submitted_at.strftime('%Y-%m-%d %H:%M') }}</small></div>{% endfor %}{% else %}<p>No submissions yet. Submit homework from the sample lesson.</p>{% endif %}</div><div class="panel"><span class="eyebrow">TUTOR SESSIONS</span><h2>{{ sessions|length }} scheduled</h2>{% for session in sessions %}<div class="admin-record"><strong>{{ session.topic }}</strong><small>{{ session.starts_at.strftime('%Y-%m-%d %H:%M') }}</small></div>{% endfor %}</div></section>
+<section class="page-shell course-hero"><span class="eyebrow">ADMINISTRATION</span><h1>Academic operations</h1><p>Protected account, curriculum, enrollment, tutor-assignment, and publication overview.</p></section>
+<section class="page-shell admin-grid">
+  <article class="panel"><span class="eyebrow">USERS</span><h2>{{ users|length }}</h2>{% for user in users %}<div class="admin-record"><strong>{{ user.email }}</strong><small>{{ user.role }} · {{ "active" if user.is_active else "inactive" }}</small></div>{% endfor %}</article>
+  <article class="panel"><span class="eyebrow">STUDENT PROFILES</span><h2>{{ profiles|length }}</h2>{% for item in profiles %}<div class="admin-record"><strong>{{ item.display_name }}</strong><small>Grade {{ item.grade_level }} · {{ item.learning_level }} · {{ item.curriculum.name if item.curriculum else "No curriculum" }}</small></div>{% endfor %}</article>
+  <article class="panel"><span class="eyebrow">CURRICULA</span><h2>{{ curricula|length }}</h2>{% for item in curricula %}<div class="admin-record"><strong>{{ item.name }}</strong><small>Grades {{ item.grade_min }}–{{ item.grade_max }} · {{ "active" if item.is_active else "inactive" }}</small></div>{% endfor %}</article>
+  <article class="panel"><span class="eyebrow">ENROLLMENTS</span><h2>{{ enrollments|length }}</h2>{% for item in enrollments %}<div class="admin-record"><strong>{{ item.student.display_name }}</strong><small>{{ item.course.title }} · Grade {{ item.grade_level }} · {{ item.status }}</small></div>{% endfor %}</article>
+  <article class="panel"><span class="eyebrow">TUTOR ASSIGNMENTS</span><h2>{{ assignments|length }}</h2><p>Assignment records are restricted to administrators and assigned tutors.</p></article>
+  <article class="panel"><span class="eyebrow">LESSON PUBLICATION</span><h2>{{ lessons|length }}</h2>{% for lesson in lessons %}<div class="admin-record"><strong>{{ lesson.title }}</strong><small>{{ lesson.publication_status }}</small></div>{% endfor %}</article>
+</section>
 {% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Create account · Vector Academy{% endblock %}
+{% block content %}
+<section class="auth-shell"><div class="auth-copy"><span class="eyebrow">STUDENT ACCOUNT</span><h1>Create your account</h1><p>After registration, choose your grade, pathway, and learning level. A guardian contact is recorded without creating a separate guardian login.</p></div>
+<form class="auth-card" method="post" action="/register">
+  <input type="hidden" name="csrf_token" value="{{ request.session.csrf_token }}">
+  {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+  <label>Email<input type="email" name="email" value="{{ email|default('') }}" autocomplete="email" required></label>
+  <label>Password<input type="password" name="password" autocomplete="new-password" minlength="10" required><small>At least 10 characters.</small></label>
+  <label>Confirm password<input type="password" name="password_confirm" autocomplete="new-password" minlength="10" required></label>
+  <button class="button primary" type="submit">Continue to academic setup</button>
+  <p>Already registered? <a href="/login">Log in</a></p>
+</form></section>
+{% endblock %}

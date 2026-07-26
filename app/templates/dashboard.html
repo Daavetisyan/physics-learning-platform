@@ -2,9 +2,10 @@
 {% block title %}Student Dashboard{% endblock %}
 {% block content %}
 <section class="page-shell dashboard-head">
-  <div><span class="eyebrow">WELCOME BACK</span><h1>{{ student.name }}</h1><p>Grade {{ student.grade }} · Continue building your motion intuition.</p></div>
+  <div><span class="eyebrow">WELCOME BACK</span><h1>{{ student.display_name }}</h1><p>Grade {{ student.grade_level }} · {{ student.curriculum.name }} · {{ student.learning_level|title }} level</p></div>
   <div class="progress-ring" style="--progress: {{ progress_percent }}"><strong>{{ progress_percent }}%</strong><span>course progress</span></div>
 </section>
+<section class="page-shell profile-strip"><div><small>ENROLLED COURSE</small><strong>{{ enrollment.course.title if enrollment else "No active course" }}</strong></div><div><small>LEARNING PATHWAY</small><strong>{{ enrollment.curriculum.name if enrollment else student.curriculum.name }}</strong></div><div><small>UPCOMING HOMEWORK</small><strong>Available when Homework workspace is enabled</strong></div><div><small>UPCOMING TUTOR SESSIONS</small><strong>{{ sessions|length }}</strong></div></section>
 <section class="page-shell dashboard-grid">
   <div class="panel wide">
     <div class="panel-header"><div><span class="eyebrow">CONTINUE LEARNING</span><h2>Position and Reference Points</h2></div><a class="button primary small" href="/lesson/position-reference-points">Continue</a></div>

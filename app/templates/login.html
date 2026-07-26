@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Log in · Vector Academy{% endblock %}
+{% block content %}
+<section class="auth-shell"><div class="auth-copy"><span class="eyebrow">WELCOME BACK</span><h1>Log in</h1><p>Continue with your own course progress, lessons, and tutor support.</p></div>
+<form class="auth-card" method="post" action="/login">
+  <input type="hidden" name="csrf_token" value="{{ request.session.csrf_token }}"><input type="hidden" name="next" value="{{ next }}">
+  {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+  <label>Email<input type="email" name="email" autocomplete="email" required></label>
+  <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+  <button class="button primary" type="submit">Log in</button>
+  <p><a href="/register">Create a student account</a></p>
+  <p class="muted">Password-reset token support is prepared in the data model. Email delivery is not configured.</p>
+</form></section>
+{% endblock %}

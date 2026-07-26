@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Assigned students · Vector Academy{% endblock %}
+{% block content %}
+<section class="page-shell course-hero"><span class="eyebrow">TUTOR WORKSPACE</span><h1>Assigned students</h1><p>Only active tutor–student assignments are visible.</p></section>
+<section class="page-shell tutoring-grid"><div class="panel wide">{% for assignment in assignments %}<a class="lesson-row" href="/tutor/students/{{ assignment.student.id }}"><span class="lesson-number">{{ assignment.student.grade_level }}</span><div><strong>{{ assignment.student.display_name }}</strong><small>{{ assignment.student.learning_level|title }} · assigned {{ assignment.assigned_at.strftime('%Y-%m-%d') }}</small></div></a>{% else %}<div class="empty-state">No students assigned.</div>{% endfor %}</div>{% if selected %}<aside class="panel"><span class="eyebrow">LEARNING INFORMATION</span><h2>{{ selected.display_name }}</h2><p>Grade {{ selected.grade_level }} · {{ selected.learning_level|title }}</p><h3>Progress</h3>{% for item in progress %}<p>{{ item.lesson.title }} — {{ item.status }}</p>{% else %}<p>No progress yet.</p>{% endfor %}<h3>Sessions</h3><p>{{ sessions|length }} tutor sessions</p></aside>{% endif %}</section>
+{% endblock %}

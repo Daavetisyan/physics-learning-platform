@@ -10,10 +10,26 @@
   <header class="topbar">
     <a class="brand" href="/">Vector<span>Academy</span></a>
     <nav>
-      <a href="/dashboard">Dashboard</a>
-      <a href="/course/foundations-of-physics">Course</a>
-      <a href="/tutoring">Tutor</a>
-      <a href="/admin">Creator view</a>
+      {% if request.state.user %}
+        {% if request.state.user.role == "student" %}
+          <a href="/dashboard">Dashboard</a>
+          <a href="/course/foundations-of-physics">Course</a>
+          <a href="/homework">Homework</a>
+          <a href="/tutoring">Tutor</a>
+        {% elif request.state.user.role == "tutor" %}
+          <a href="/tutor/students">My students</a>
+        {% elif request.state.user.role == "admin" %}
+          <a href="/admin">Administration</a>
+        {% endif %}
+        <a href="/account">Account</a>
+        <form class="nav-logout" action="/logout" method="post">
+          <input type="hidden" name="csrf_token" value="{{ request.session.csrf_token }}">
+          <button type="submit">Log out</button>
+        </form>
+      {% else %}
+        <a href="/login">Log in</a>
+        <a href="/register">Create account</a>
+      {% endif %}
     </nav>
   </header>
   <main>{% block content %}{% endblock %}</main>
