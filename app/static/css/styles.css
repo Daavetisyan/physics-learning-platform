@@ -258,7 +258,7 @@ a,button,input,textarea,select,summary{outline-offset:4px}
 .street-scene{border:0;border-radius:0;background-color:#183450;background-image:url("/static/simulation/street-background.png");background-repeat:no-repeat;background-position:center top;background-size:auto 137%}.scene-sky,.scene-tree,.scene-lamp,.scene-bench,.street-pavement{display:none}
 .relative-axis-wrap{margin:0;padding:18px 24px 28px;background:#0c1d31;border-top:1px solid rgba(255,255,255,.13)}
 .relative-axis-line{background:#91a7bd}.relative-axis-tick i{background:#91a7bd}.relative-axis-tick small,.axis-positive-label{color:#dce7f3}
-.scene-building{bottom:55px;width:42px;height:42px;transform:translateX(-50%);background:transparent}.scene-building:before{display:none}.scene-building small{bottom:0;background:rgba(247,228,202,.92);white-space:nowrap}
+.scene-building{bottom:55px;width:180px;height:220px;transform:translateX(-50%);background:transparent}.scene-building:before{display:none}.scene-building small{position:absolute;top:-25px;bottom:auto;left:50%;transform:translateX(-50%);padding:3px 7px;background:var(--navy);color:white;border-radius:5px;font-size:.64rem;font-weight:700;line-height:1.6;white-space:nowrap;box-shadow:0 3px 9px rgba(16,31,61,.2)}
 .relative-control-panel{padding:0;background:transparent;gap:14px}
 .relative-control-panel .live-measurements,.relative-control-panel .lab-control-section{padding:16px;border:1px solid rgba(255,255,255,.13);border-radius:var(--radius-md);background:#10243c}
 .relative-control-panel .lab-control-section{flex:1}.relative-control-panel .lab-section-heading>span,.bottom-control-card .lab-section-heading>span{color:#edf5fc}
@@ -294,6 +294,7 @@ a,button,input,textarea,select,summary{outline-offset:4px}
 }
 @container relative-lab (max-width:700px){
   .street-scene{background-position:73% top}
+  .scene-building{width:140px;height:175px}
   .relative-lab-grid{padding:0 12px}
   .lab-mission-bar,.mission-feedback,.lab-action-row{margin-left:12px;margin-right:12px}
   .relative-control-panel,.lab-bottom-controls{display:grid;grid-template-columns:1fr}
