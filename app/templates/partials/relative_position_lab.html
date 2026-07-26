@@ -13,7 +13,7 @@
           <p class="sr-only" id="sceneDescription">A one-dimensional street from negative ten to positive ten meters with a coffee shop, dog, student, cyclist, and ground origin.</p>
           <div class="scene-sky"><span class="scene-cloud cloud-one"></span><span class="scene-cloud cloud-two"></span></div>
           <div class="scene-building lab-object" id="buildingObject" data-object="building" aria-label="Coffee shop building">
-            <small>Building</small>
+            <small>Coffee shop</small>
           </div>
           <div class="scene-tree tree-one" aria-hidden="true"><span></span></div>
           <div class="scene-lamp lamp-one" aria-hidden="true"><span></span></div>
@@ -47,7 +47,7 @@
           <div class="lab-section-heading"><span id="liveMeasurementsTitle">LIVE MEASUREMENTS</span><small>Instant values</small></div>
           <div class="measurement-grid">
             <div><small>Your coordinate</small><strong id="playerCoordinate">+0.0 m</strong></div>
-            <div><small>Relative to building</small><strong id="buildingRelativeValue">+6.0 m</strong></div>
+            <div><small>Relative to coffee shop</small><strong id="buildingRelativeValue">−6.5 m</strong></div>
             <div><small>Relative to dog</small><strong id="dogRelativeValue">+2.0 m</strong></div>
             <div><small>Relative to cyclist</small><strong id="cyclistRelativeValue">−5.0 m</strong></div>
             <div class="emphasis"><small id="referenceCoordinateLabel">Dog coordinate</small><strong id="referenceCoordinate">−2.0 m</strong></div>
@@ -63,7 +63,7 @@
         <section class="lab-control-section">
           <div class="lab-section-heading"><span>REFERENCE OBJECT</span><small>Select what “relative to” means</small></div>
           <div class="reference-selector" id="referenceSelector">
-            <button type="button" data-reference="building"><span aria-hidden="true">▥</span><strong>Building</strong></button>
+            <button type="button" data-reference="building"><span aria-hidden="true">▥</span><strong>Coffee shop</strong></button>
             <button type="button" data-reference="dog" class="active" aria-pressed="true"><span aria-hidden="true">◆</span><strong>Dog</strong></button>
             <button type="button" data-reference="cyclist"><span aria-hidden="true">◫</span><strong>Cyclist</strong></button>
             <button type="button" data-reference="ground"><span aria-hidden="true">⌖</span><strong>Ground origin</strong></button>
@@ -82,7 +82,7 @@
       </section>
       <section class="bottom-control-card fixed-object-card">
         <div class="lab-section-heading"><span>FIXED LANDMARKS</span><small>World positions</small></div>
-        <div class="fixed-position-row"><span>Building <strong>−6.0 m</strong></span><span>Dog <strong>−2.0 m</strong></span></div>
+        <div class="fixed-position-row"><span>Coffee shop <strong>+6.5 m</strong></span><span>Dog <strong>−2.0 m</strong></span></div>
         <p>These objects remain stationary.</p>
       </section>
       <section class="bottom-control-card cyclist-controls">
@@ -101,7 +101,7 @@
         <label class="lab-select-label">Origin preset
           <select id="originPreset">
             <option value="ground">Ground origin (0 m)</option>
-            <option value="building">Building</option>
+            <option value="building">Coffee shop</option>
             <option value="dog">Dog</option>
             <option value="cyclist">Cyclist</option>
             <option value="custom">Custom position</option>

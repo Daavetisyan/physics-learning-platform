@@ -293,6 +293,7 @@ a,button,input,textarea,select,summary{outline-offset:4px}
   .explore-card-grid{grid-template-columns:1fr 1fr}
 }
 @container relative-lab (max-width:700px){
+  .street-scene{background-position:73% top}
   .relative-lab-grid{padding:0 12px}
   .lab-mission-bar,.mission-feedback,.lab-action-row{margin-left:12px;margin-right:12px}
   .relative-control-panel,.lab-bottom-controls{display:grid;grid-template-columns:1fr}

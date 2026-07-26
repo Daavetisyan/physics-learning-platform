@@ -7,7 +7,7 @@
   const PLAYER_STEP = 0.5;
   const INITIAL_STATE = {
     playerWorldX: 0,
-    buildingWorldX: -6,
+    buildingWorldX: 6.5,
     dogWorldX: -2,
     cyclistWorldX: 5,
     cyclistVelocity: 2,
@@ -31,14 +31,14 @@
   const state = { ...INITIAL_STATE, completedMissions: [], errors: [] };
   const missions = [
     { type: 'physical_offset', reference: 'dog', target: 3, tolerance: 0.15, text: 'Stand 3 m to the right of the dog.', hint: 'The dog is at −2 m in the physical world. Move until you are at +1 m.', concept: 'relative' },
-    { type: 'physical_offset', reference: 'building', target: -2, tolerance: 0.15, text: 'Stand 2 m to the left of the building.', hint: 'The building is fixed at −6 m. “Left” means a smaller world position.', concept: 'distance' },
+    { type: 'physical_offset', reference: 'building', target: -2, tolerance: 0.15, text: 'Stand 2 m to the left of the coffee shop.', hint: 'The coffee shop is fixed at +6.5 m. “Left” means a smaller world position.', concept: 'distance' },
     { type: 'distance', reference: 'cyclist', target: 4, tolerance: 0.15, text: 'Select the cyclist and stay exactly 4 m away.', hint: 'Pause the cyclist first if you want a stable target. Distance has no sign.', concept: 'distance' },
     { type: 'relative', reference: 'cyclist', target: 1, tolerance: 0.15, text: 'Choose the cyclist as reference and reach relative position +1 m.', hint: 'Check the positive-direction setting before interpreting +1 m.', concept: 'moving' },
-    { type: 'origin', reference: 'building', tolerance: 0.15, text: 'Shift the displayed origin to the building without moving yourself.', hint: 'Use the Displayed origin menu. Physical objects should remain fixed.', concept: 'origin' },
+    { type: 'origin', reference: 'building', tolerance: 0.15, text: 'Shift the displayed origin to the coffee shop without moving yourself.', hint: 'Use the Displayed origin menu. Physical objects should remain fixed.', concept: 'origin' },
     { type: 'direction', direction: 'left', text: 'Reverse the positive direction so left is positive.', hint: 'Only coordinate signs should change; the street must not move.', concept: 'direction' },
     { type: 'tracking', reference: 'cyclist', range: 1, seconds: 3, text: 'Stay within 1 m of the moving cyclist for three seconds.', hint: 'Select Cyclist, press Play, then use A/D or the movement buttons to follow.', concept: 'moving' },
   ];
-  const labels = { building: 'Building', dog: 'Dog', cyclist: 'Cyclist', ground: 'Ground origin' };
+  const labels = { building: 'Coffee shop', dog: 'Dog', cyclist: 'Cyclist', ground: 'Ground origin' };
   const elements = {
     scene: document.getElementById('streetScene'),
     player: document.getElementById('playerObject'),
