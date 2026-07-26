@@ -41,7 +41,7 @@
     </nav>
   </aside>
 
-  <main class="lesson-content lesson-step-content">
+  <main class="lesson-content lesson-step-content {% if current_step.key == 'simulation' %}simulation-step-content{% endif %}">
     <header class="lesson-step-header">
       <div>
         <span class="eyebrow">{{ current_step.group|upper }} · STEP {{ step_index }} OF {{ steps|length }}</span>
