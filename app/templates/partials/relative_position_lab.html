@@ -29,19 +29,26 @@
           <div class="relative-axis" id="relativeAxis"></div>
         </div>
 
-        <div class="touch-movement" aria-label="Player movement controls">
-          <button type="button" id="moveLeft" aria-label="Move player left"><span aria-hidden="true">←</span> Move left <kbd>A</kbd></button>
-          <button type="button" id="moveRight" aria-label="Move player right">Move right <kbd>D</kbd> <span aria-hidden="true">→</span></button>
-        </div>
-
-        <div class="scene-playback">
-          <button type="button" class="icon-control" id="playCyclist" aria-label="Play cyclist movement">▶ <span>Play</span></button>
-          <button type="button" class="icon-control" id="pauseCyclist" aria-label="Pause cyclist movement">Ⅱ <span>Pause</span></button>
-          <button type="button" class="icon-control" id="resetLab" aria-label="Reset complete simulation">↺ <span>Reset</span></button>
-        </div>
       </div>
 
       <aside class="relative-control-panel">
+        <section class="live-measurements" aria-labelledby="liveMeasurementsTitle">
+          <div class="lab-section-heading"><span id="liveMeasurementsTitle">LIVE MEASUREMENTS</span><small>Instant values</small></div>
+          <div class="measurement-grid">
+            <div><small>Your coordinate</small><strong id="playerCoordinate">+0.0 m</strong></div>
+            <div><small>Relative to building</small><strong id="buildingRelativeValue">+6.0 m</strong></div>
+            <div><small>Relative to dog</small><strong id="dogRelativeValue">+2.0 m</strong></div>
+            <div><small>Relative to cyclist</small><strong id="cyclistRelativeValue">−5.0 m</strong></div>
+            <div class="emphasis"><small id="referenceCoordinateLabel">Dog coordinate</small><strong id="referenceCoordinate">−2.0 m</strong></div>
+            <div><small>Physical separation</small><strong id="physicalDistanceValue">2.0 m</strong></div>
+            <div hidden><small>Your relative position</small><strong id="relativePositionValue">+2.0 m</strong></div>
+            <div hidden><small>Current origin</small><strong id="originValue">0.0 m</strong></div>
+            <div hidden><small>Positive direction</small><strong id="directionValue">Right →</strong></div>
+            <div class="cyclist-velocity-row" id="cyclistVelocityRow"><small>Cyclist velocity</small><strong id="cyclistVelocityValue">0.0 m/s</strong></div>
+          </div>
+          <p class="relative-interpretation" id="relativeInterpretation" aria-live="polite">You are 2.0 m to the right of the dog.</p>
+        </section>
+
         <section class="lab-control-section">
           <div class="lab-section-heading"><span>REFERENCE OBJECT</span><small>Select what “relative to” means</small></div>
           <div class="reference-selector" id="referenceSelector">
@@ -51,48 +58,52 @@
             <button type="button" data-reference="ground"><span aria-hidden="true">⌖</span><strong>Ground origin</strong></button>
           </div>
         </section>
-
-        <section class="lab-control-section">
-          <div class="lab-section-heading"><span>COORDINATE SYSTEM</span></div>
-          <label class="lab-select-label">Displayed origin
-            <select id="originPreset">
-              <option value="ground">Ground origin (0 m)</option>
-              <option value="building">Building</option>
-              <option value="dog">Dog</option>
-              <option value="cyclist">Cyclist</option>
-              <option value="custom">Custom position</option>
-            </select>
-          </label>
-          <label class="origin-slider-label">Custom origin <strong id="originSliderValue">0.0 m</strong>
-            <input id="originSlider" type="range" min="-10" max="10" step="0.5" value="0" aria-label="Custom origin position">
-          </label>
-          <div class="direction-toggle" role="group" aria-label="Positive direction">
-            <button type="button" class="active" data-direction="right" aria-pressed="true">Right is positive</button>
-            <button type="button" data-direction="left" aria-pressed="false">Left is positive</button>
-          </div>
-        </section>
-
-        <section class="lab-control-section cyclist-controls">
-          <div class="lab-section-heading"><span>CYCLIST MOTION</span><small id="cyclistMotionStatus">Paused</small></div>
-          <label class="lab-select-label">Speed
-            <select id="cyclistSpeed"><option value="1">Slow · 1 m/s</option><option value="2" selected>Medium · 2 m/s</option><option value="3.5">Fast · 3.5 m/s</option></select>
-          </label>
-        </section>
-
-        <section class="live-measurements" aria-labelledby="liveMeasurementsTitle">
-          <div class="lab-section-heading"><span id="liveMeasurementsTitle">LIVE MEASUREMENTS</span><small>All values update instantly</small></div>
-          <div class="measurement-grid">
-            <div><small>Your coordinate</small><strong id="playerCoordinate">+0.0 m</strong></div>
-            <div><small id="referenceCoordinateLabel">Dog coordinate</small><strong id="referenceCoordinate">−2.0 m</strong></div>
-            <div class="emphasis"><small>Your relative position</small><strong id="relativePositionValue">+2.0 m</strong></div>
-            <div><small>Physical separation</small><strong id="physicalDistanceValue">2.0 m</strong></div>
-            <div><small>Current origin</small><strong id="originValue">0.0 m</strong></div>
-            <div><small>Positive direction</small><strong id="directionValue">Right →</strong></div>
-            <div class="cyclist-velocity-row" id="cyclistVelocityRow"><small>Cyclist velocity</small><strong id="cyclistVelocityValue">0.0 m/s</strong></div>
-          </div>
-          <p class="relative-interpretation" id="relativeInterpretation" aria-live="polite">You are 2.0 m to the right of the dog.</p>
-        </section>
       </aside>
+    </div>
+
+    <div class="lab-bottom-controls">
+      <section class="bottom-control-card player-control-card">
+        <div class="lab-section-heading"><span>YOUR POSITION</span><strong id="bottomPlayerCoordinate">+0.0 m</strong></div>
+        <div class="touch-movement" aria-label="Player movement controls">
+          <button type="button" id="moveLeft" aria-label="Move player left"><span aria-hidden="true">←</span> Move left <kbd>A</kbd></button>
+          <button type="button" id="moveRight" aria-label="Move player right">Move right <kbd>D</kbd> <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
+      <section class="bottom-control-card fixed-object-card">
+        <div class="lab-section-heading"><span>FIXED LANDMARKS</span><small>World positions</small></div>
+        <div class="fixed-position-row"><span>Building <strong>−6.0 m</strong></span><span>Dog <strong>−2.0 m</strong></span></div>
+        <p>These objects remain stationary.</p>
+      </section>
+      <section class="bottom-control-card cyclist-controls">
+        <div class="lab-section-heading"><span>CYCLIST MOTION</span><small id="cyclistMotionStatus">Paused</small></div>
+        <label class="lab-select-label">Speed
+          <select id="cyclistSpeed"><option value="1">Slow · 1 m/s</option><option value="2" selected>Medium · 2 m/s</option><option value="3.5">Fast · 3.5 m/s</option></select>
+        </label>
+        <div class="scene-playback">
+          <button type="button" class="icon-control" id="playCyclist" aria-label="Play cyclist movement">▶ <span>Play</span></button>
+          <button type="button" class="icon-control" id="pauseCyclist" aria-label="Pause cyclist movement">Ⅱ <span>Pause</span></button>
+          <button type="button" class="icon-control" id="resetLab" aria-label="Reset complete simulation">↺ <span>Reset</span></button>
+        </div>
+      </section>
+      <section class="bottom-control-card coordinate-control-card">
+        <div class="lab-section-heading"><span>DISPLAYED ORIGIN</span><strong id="bottomOriginValue">0.0 m</strong></div>
+        <label class="lab-select-label">Origin preset
+          <select id="originPreset">
+            <option value="ground">Ground origin (0 m)</option>
+            <option value="building">Building</option>
+            <option value="dog">Dog</option>
+            <option value="cyclist">Cyclist</option>
+            <option value="custom">Custom position</option>
+          </select>
+        </label>
+        <label class="origin-slider-label">Custom origin <strong id="originSliderValue">0.0 m</strong>
+          <input id="originSlider" type="range" min="-10" max="10" step="0.5" value="0" aria-label="Custom origin position">
+        </label>
+        <div class="direction-toggle" role="group" aria-label="Positive direction">
+          <button type="button" class="active" data-direction="right" aria-pressed="true">→ Right positive</button>
+          <button type="button" data-direction="left" aria-pressed="false">← Left positive</button>
+        </div>
+      </section>
     </div>
 
     <div class="lab-action-row">

@@ -60,6 +60,11 @@
     speed: document.getElementById('cyclistSpeed'),
     motionStatus: document.getElementById('cyclistMotionStatus'),
     playerCoordinate: document.getElementById('playerCoordinate'),
+    bottomPlayerCoordinate: document.getElementById('bottomPlayerCoordinate'),
+    bottomOriginValue: document.getElementById('bottomOriginValue'),
+    buildingRelative: document.getElementById('buildingRelativeValue'),
+    dogRelative: document.getElementById('dogRelativeValue'),
+    cyclistRelative: document.getElementById('cyclistRelativeValue'),
     referenceCoordinate: document.getElementById('referenceCoordinate'),
     referenceCoordinateLabel: document.getElementById('referenceCoordinateLabel'),
     relative: document.getElementById('relativePositionValue'),
@@ -163,8 +168,20 @@
   function renderMeasurements() {
     const positions = objects();
     const referenceX = positions[state.selectedReference];
-    elements.playerCoordinate.textContent = Physics.formatSigned(
+    const playerCoordinate = Physics.formatSigned(
       Physics.displayedCoordinate(state.playerWorldX, state.originWorldX, state.positiveDirection),
+    );
+    elements.playerCoordinate.textContent = playerCoordinate;
+    elements.bottomPlayerCoordinate.textContent = playerCoordinate;
+    elements.bottomOriginValue.textContent = `${state.originWorldX.toFixed(1)} m`;
+    elements.buildingRelative.textContent = Physics.formatSigned(
+      Physics.relativePosition(state.playerWorldX, state.buildingWorldX, state.positiveDirection),
+    );
+    elements.dogRelative.textContent = Physics.formatSigned(
+      Physics.relativePosition(state.playerWorldX, state.dogWorldX, state.positiveDirection),
+    );
+    elements.cyclistRelative.textContent = Physics.formatSigned(
+      Physics.relativePosition(state.playerWorldX, state.cyclistWorldX, state.positiveDirection),
     );
     elements.referenceCoordinate.textContent = Physics.formatSigned(
       Physics.displayedCoordinate(referenceX, state.originWorldX, state.positiveDirection),
