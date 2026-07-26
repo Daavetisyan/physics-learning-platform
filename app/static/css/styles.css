@@ -255,9 +255,10 @@ a,button,input,textarea,select,summary{outline-offset:4px}
 .mission-feedback{margin:0 18px 10px;color:#dce7f3}.mission-feedback.success{color:#79e0bf}
 .relative-lab-grid{grid-template-columns:minmax(0,1fr) 330px;gap:14px;padding:0 18px}
 .relative-scene-column{padding:0;background:#10243c;border:1px solid rgba(255,255,255,.13);border-radius:var(--radius-md);overflow:hidden}
-.street-scene{border:0;border-radius:0;background:#183450}.scene-sky{background:linear-gradient(#173651 0 65%,#cfbf9f 65% 68%,#aa9b7e 68%)}
+.street-scene{border:0;border-radius:0;background-color:#183450;background-image:url("/static/simulation/street-background.png");background-repeat:no-repeat;background-position:center top;background-size:auto 137%}.scene-sky,.scene-tree,.scene-lamp,.scene-bench,.street-pavement{display:none}
 .relative-axis-wrap{margin:0;padding:18px 24px 28px;background:#0c1d31;border-top:1px solid rgba(255,255,255,.13)}
 .relative-axis-line{background:#91a7bd}.relative-axis-tick i{background:#91a7bd}.relative-axis-tick small,.axis-positive-label{color:#dce7f3}
+.scene-building{bottom:55px;width:42px;height:42px;transform:translateX(-50%);background:transparent}.scene-building:before{display:none}.scene-building small{bottom:0;background:rgba(247,228,202,.92);white-space:nowrap}
 .relative-control-panel{padding:0;background:transparent;gap:14px}
 .relative-control-panel .live-measurements,.relative-control-panel .lab-control-section{padding:16px;border:1px solid rgba(255,255,255,.13);border-radius:var(--radius-md);background:#10243c}
 .relative-control-panel .lab-control-section{flex:1}.relative-control-panel .lab-section-heading>span,.bottom-control-card .lab-section-heading>span{color:#edf5fc}
