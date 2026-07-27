@@ -1,41 +1,142 @@
-<section class="lesson-step-body reference-journey-section">
-  <div class="reference-journey-lab" data-simulation="distance-displacement" aria-label="Journey Lab: Distance versus Displacement">
-    <div class="reference-journey-canvas" id="journeyStage" tabindex="0" aria-describedby="journeyLabDescription">
-      <p class="sr-only" id="journeyLabDescription">An illustrated park path from a student at the start to a blue flag. Use Walk, arrow keys, or A and D to move. Live distance and displacement update in the right panel.</p>
-      <img src="/static/simulation/distance-displacement-reference.png" alt="Illustrated park journey laboratory with a winding path, start position, blue finish flag, live measurements, tools, and learning panels">
+<section class="lesson-step-body journey-game-section">
+  <div class="journey-game" data-simulation="distance-displacement">
+    <div class="journey-game-grid">
+      <div class="journey-game-scene" id="journeyStage" tabindex="0"
+           aria-label="Interactive park journey. Use left and right arrows or A and D to move along the path.">
+        <img class="journey-game-background"
+             src="/static/simulation/distance-displacement/park-background.png"
+             alt="Illustrated park with a winding walking path, pond, trees, benches, and lamps">
 
-      <div class="journey-reference-marker" id="journeyTraveler" aria-label="Current journey position"><span></span></div>
-      <svg class="journey-reference-overlay" viewBox="0 0 2762 1448" preserveAspectRatio="none" aria-hidden="true">
-        <polyline id="journeyPath" points=""></polyline>
-        <line id="journeyDisplacementArrow" x1="330" y1="630" x2="330" y2="630"></line>
-      </svg>
+        <div class="journey-mission-card">
+          <span>MISSION <b id="journeyMissionNumber">1 OF 5</b></span>
+          <strong id="journeyMissionText">Reach the blue flag. Compare the path with your displacement.</strong>
+        </div>
 
-      <div class="journey-reference-values" aria-live="polite">
-        <output id="journeyDistance">0.0 m</output>
-        <output id="journeyDisplacement">0.0 m</output>
-        <output id="journeyDirectionValue">—</output>
-        <output id="journeyTime">00:00</output>
-        <output id="journeyAverage">0.00 m/s</output>
+        <div class="journey-scene-actions">
+          <div class="journey-score"><span aria-hidden="true">★</span><strong id="journeyScore">0</strong><small>/ 5</small></div>
+          <button id="journeyHint" class="journey-icon-action" type="button">
+            <span aria-hidden="true">?</span> Hint
+          </button>
+        </div>
+
+        <svg class="journey-route-layer" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <marker id="journeyArrowHead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#19a9d5"></path>
+            </marker>
+          </defs>
+          <polyline id="journeyPath" class="journey-traveled-path" points=""></polyline>
+          <line id="journeyDisplacementArrow" class="journey-displacement-line"
+                x1="110" y1="475" x2="110" y2="475" marker-end="url(#journeyArrowHead)"></line>
+        </svg>
+
+        <div class="journey-start-marker" aria-hidden="true"><span>START</span></div>
+        <div class="journey-finish-marker" aria-label="Blue finish flag">
+          <span class="journey-flag-pole"></span><span class="journey-flag-cloth"></span>
+        </div>
+
+        <div class="journey-player" id="journeyTraveler" aria-label="Your current position">
+          <span class="journey-object-label">You</span>
+          <img src="/static/simulation/distance-displacement/student.png" alt="">
+          <span class="journey-player-shadow" aria-hidden="true"></span>
+        </div>
+
+        <div class="journey-scene-feedback" id="journeySceneFeedback" aria-live="polite">
+          Distance <strong id="journeySceneDistance">0.0 m</strong>
+          <span aria-hidden="true">·</span>
+          Displacement <strong id="journeySceneDisplacement">0.0 m</strong>
+        </div>
+
+        <div class="journey-touch-controls" aria-label="Movement controls">
+          <button id="journeyLeft" type="button" aria-label="Walk backward"><span aria-hidden="true">←</span></button>
+          <button id="journeyRight" type="button" aria-label="Walk forward"><span aria-hidden="true">→</span></button>
+        </div>
       </div>
 
-      <button class="journey-hotspot journey-hint" id="journeyHint" type="button" aria-label="Show mission hint"></button>
-      <button class="journey-hotspot journey-walk" id="journeyRight" type="button" aria-label="Walk forward"></button>
-      <button class="journey-hotspot journey-reset" id="journeyReset" type="button" aria-label="Reset path"></button>
-      <button class="journey-hotspot journey-clear" id="journeyClear" type="button" aria-label="Clear traveled path"></button>
-      <button class="journey-hotspot journey-pause" id="journeyRun" type="button" aria-label="Pause or resume journey"></button>
-      <button class="journey-hotspot journey-show-path" id="journeyShowPath" type="button" aria-label="Show or hide traveled path" aria-pressed="true"></button>
-      <button class="journey-hotspot journey-tab-explore" type="button" data-journey-tab="explore" aria-label="Explore"></button>
-      <button class="journey-hotspot journey-tab-challenge" type="button" data-journey-tab="challenge" aria-label="Challenge"></button>
-      <button class="journey-hotspot journey-tab-results" type="button" data-journey-tab="results" aria-label="Results"></button>
+      <aside class="journey-game-sidebar" aria-label="Journey information and tools">
+        <section class="journey-measurements-card">
+          <div class="journey-panel-title">
+            <span class="journey-panel-icon" aria-hidden="true">↗</span>
+            <div><span>LIVE</span><h2>Measurements</h2></div>
+          </div>
+          <dl>
+            <div><dt>Distance traveled</dt><dd id="journeyDistance">0.0 m</dd></div>
+            <div><dt>Displacement</dt><dd id="journeyDisplacement">0.0 m</dd></div>
+            <div><dt>Direction</dt><dd id="journeyDirectionValue">—</dd></div>
+            <div><dt>Elapsed time</dt><dd id="journeyTime">00:00</dd></div>
+            <div><dt>Average speed</dt><dd id="journeyAverage">0.00 m/s</dd></div>
+          </dl>
+        </section>
 
-      <button id="journeyLeft" type="button" class="sr-only">Move backward</button>
-      <button id="journeyAdd" type="button" class="sr-only">Add movement step</button>
-      <button id="journeyUndo" type="button" class="sr-only">Undo last step</button>
-      <button id="journeySave" type="button" class="sr-only">Save journey</button>
-      <button id="journeyCheck" type="button" class="sr-only">Check mission</button>
-      <select id="journeyDirection" class="sr-only" aria-label="Positive direction"><option value="right">Right is positive</option><option value="left">Left is positive</option></select>
-      <output id="journeyPosition" class="sr-only">0 m</output>
-      <p id="journeyTaskFeedback" class="journey-reference-feedback" aria-live="polite"></p>
+        <section class="journey-tools-card">
+          <div class="journey-panel-title compact">
+            <span class="journey-panel-icon" aria-hidden="true">⌁</span>
+            <div><span>CONTROLS</span><h2>Tools</h2></div>
+          </div>
+          <div class="journey-tool-grid">
+            <button id="journeyRun" class="button primary" type="button"><span aria-hidden="true">▶</span><span>Walk</span></button>
+            <button id="journeyReset" class="button secondary" type="button"><span aria-hidden="true">↺</span><span>Reset path</span></button>
+            <button id="journeyUndo" class="button secondary" type="button"><span aria-hidden="true">↶</span><span>Undo step</span></button>
+            <button id="journeyClear" class="button secondary" type="button"><span aria-hidden="true">⌫</span><span>Clear path</span></button>
+          </div>
+          <label class="journey-path-toggle">
+            <input id="journeyShowPath" type="checkbox" checked>
+            <span>Show traveled path</span>
+          </label>
+        </section>
+
+        <section class="journey-info-card">
+          <span class="journey-panel-icon" aria-hidden="true">i</span>
+          <div><strong>Distance vs. displacement</strong><p>Distance follows every step of your route. Displacement connects only your start and final positions.</p></div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="journey-game-tabs" role="tablist" aria-label="Journey laboratory panels">
+      <button id="journeyExploreTab" type="button" role="tab" aria-selected="true" aria-controls="journeyExplorePanel" data-journey-tab="explore">Explore</button>
+      <button id="journeyChallengeTab" type="button" role="tab" aria-selected="false" aria-controls="journeyChallengePanel" data-journey-tab="challenge">Challenge</button>
+      <button id="journeyResultsTab" type="button" role="tab" aria-selected="false" aria-controls="journeyResultsPanel" data-journey-tab="results">Results</button>
+    </div>
+
+    <div id="journeyExplorePanel" class="journey-tab-panel" role="tabpanel" aria-labelledby="journeyExploreTab">
+      <article><span class="journey-card-icon orange" aria-hidden="true">◎</span><h3>Your task</h3><p>Walk to the blue flag and watch how the complete path differs from the direct displacement.</p></article>
+      <article><span class="journey-card-icon cyan" aria-hidden="true">◇</span><h3>What to observe</h3><p>Turning along the path increases distance, while displacement depends only on start and finish.</p></article>
+      <article><span class="journey-card-icon navy" aria-hidden="true">∑</span><h3>Quick reference</h3><p><strong>Distance</strong> = sum of all path segments</p><p><strong>Δx</strong> = x<sub>f</sub> − x<sub>i</sub></p></article>
+      <article><span class="journey-card-icon gold" aria-hidden="true">✦</span><h3>Pro tip</h3><p>A round trip can have a large distance and zero displacement.</p></article>
+    </div>
+
+    <div id="journeyChallengePanel" class="journey-tab-panel journey-challenge-panel" role="tabpanel" aria-labelledby="journeyChallengeTab" hidden>
+      <div class="journey-challenge-copy">
+        <span class="eyebrow">INVESTIGATION</span>
+        <h3 id="journeyTaskTitle">Reach the blue flag</h3>
+        <p id="journeyTaskPrompt">Predict whether distance or displacement will be larger, then test your idea.</p>
+        <label>Prediction
+          <textarea id="journeyPrediction" rows="2" placeholder="I predict…"></textarea>
+        </label>
+        <label>What did you observe?
+          <textarea id="journeyExplanation" rows="2" placeholder="I observed…"></textarea>
+        </label>
+      </div>
+      <div class="journey-challenge-controls">
+        <label>Positive direction
+          <select id="journeyDirection">
+            <option value="right">Right is positive</option>
+            <option value="left">Left is positive</option>
+          </select>
+        </label>
+        <button id="journeyCheck" class="button primary" type="button">Check investigation</button>
+        <button id="journeySave" class="button secondary" type="button">Save journey</button>
+        <button id="journeyAdd" class="button secondary" type="button">Add movement step</button>
+        <p id="journeyTaskFeedback" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <div id="journeyResultsPanel" class="journey-tab-panel journey-results-panel" role="tabpanel" aria-labelledby="journeyResultsTab" hidden>
+      <article><span>Missions completed</span><strong id="journeyCompleted">0 / 5</strong></article>
+      <article><span>Current distance</span><strong id="journeyResultDistance">0.0 m</strong></article>
+      <article><span>Current displacement</span><strong id="journeyResultDisplacement">0.0 m</strong></article>
+      <article><span>Saved comparisons</span><strong id="journeySavedCount">0</strong></article>
+      <div class="journey-saved-list" id="journeySavedList"><p>Save two different journeys to compare them here.</p></div>
     </div>
   </div>
 </section>
