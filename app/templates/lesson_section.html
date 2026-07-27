@@ -174,32 +174,7 @@
 
     {% elif current_step.key == "simulation" %}
     {% if content.simulation.type == "distance_displacement_journey" %}
-    <section class="lesson-step-body">
-      <p class="section-intro">{{ content.simulation.instruction }}</p>
-      <div class="journey-lab" data-simulation="distance-displacement">
-        <header class="journey-lab-header">
-          <div><span class="eyebrow">INTERACTIVE INVESTIGATION</span><h2>{{ content.simulation.title }}</h2></div>
-          <div class="journey-live" aria-live="polite"><span>Distance <strong id="journeyDistance">0 m</strong></span><span>Displacement <strong id="journeyDisplacement">0 m</strong></span></div>
-        </header>
-        <div class="journey-stage" id="journeyStage" tabindex="0" aria-label="Journey number line. Use left and right arrow keys to move.">
-          <div class="journey-direction"><span id="journeyNegative">← negative</span><span id="journeyPositive">positive →</span></div>
-          <div class="journey-axis" aria-hidden="true">{% for tick in range(-10, 11) %}<span class="journey-tick" style="left: {{ (tick + 10) * 5 }}%"><i></i><small>{{ tick }}</small></span>{% endfor %}</div>
-          <div id="journeyPath" class="journey-path"></div><div id="journeyDisplacementArrow" class="journey-displacement-arrow"><span>Δx</span></div>
-          <div id="journeyStart" class="journey-marker start"><span>Start</span></div><div id="journeyTraveler" class="journey-traveler"><span aria-hidden="true">→</span><strong>YOU</strong></div>
-        </div>
-        <div class="journey-controls">
-          <div class="journey-move"><button type="button" id="journeyLeft" class="button secondary">← Move left</button><strong id="journeyPosition">0 m</strong><button type="button" id="journeyRight" class="button secondary">Move right →</button></div>
-          <div class="journey-actions"><button type="button" id="journeyAdd" class="button primary">Add movement step</button><button type="button" id="journeyUndo" class="button secondary">Undo</button><button type="button" id="journeyRun" class="button secondary">Run journey</button><button type="button" id="journeySave" class="button secondary">Save for comparison</button><button type="button" id="journeyReset" class="button secondary">Reset</button></div>
-          <label class="journey-direction-control">Positive direction<select id="journeyDirection"><option value="right">Right is positive</option><option value="left">Left is positive</option></select></label>
-        </div>
-        <div class="journey-investigation">
-          <div><label for="journeyPrediction"><strong>Predict before testing</strong></label><textarea id="journeyPrediction" rows="2" placeholder="I predict distance will… because…"></textarea></div>
-          <div class="journey-task"><span id="journeyTaskCount">Task 1 of {{ content.simulation.tasks|length }}</span><p id="journeyTask">{{ content.simulation.tasks[0] }}</p><button type="button" id="journeyCheck" class="button primary">Check task</button><p id="journeyTaskFeedback" aria-live="polite"></p></div>
-          <div><label for="journeyExplanation"><strong>Explain what you observed</strong></label><textarea id="journeyExplanation" rows="2" placeholder="The result shows that…"></textarea></div>
-        </div>
-        <div id="journeyComparisons" class="journey-comparisons" aria-live="polite"><p>Save up to two journeys to compare their paths and endpoints.</p></div>
-      </div>
-    </section>
+    {% include "partials/distance_displacement_lab.html" %}
     {% else %}
     {% include "partials/relative_position_lab.html" %}
     {% endif %}

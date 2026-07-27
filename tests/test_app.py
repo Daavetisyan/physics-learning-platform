@@ -269,6 +269,7 @@ def test_authenticated_lesson_two_lab_math_assessment_homework_and_ai():
     simulation = client.get("/lesson/distance-displacement/simulation")
     assert 'data-simulation="distance-displacement"' in simulation.text
     assert "journeyUndo" in simulation.text and "journeyDirection" in simulation.text
+    assert "/static/simulation/distance-displacement-reference.png" in simulation.text
     assessment = client.get("/lesson/distance-displacement/assessment")
     assert assessment.text.count("quiz-question-card") >= 10
     assert assessment.text.count('data-question-type="written_review"') == 2

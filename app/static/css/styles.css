@@ -517,3 +517,24 @@ a,button,input,textarea,select,summary{outline-offset:4px}
 @media(max-width:1050px){.journey-controls{grid-template-columns:1fr 1fr}.journey-direction-control{grid-column:1/-1}.journey-investigation{grid-template-columns:1fr}}
 @media(max-width:700px){.review-grid{grid-template-columns:1fr}.journey-lab-header,.compact-homework-card{align-items:stretch;flex-direction:column}.journey-live{display:grid;grid-template-columns:1fr 1fr}.journey-live span{min-width:0}.journey-stage{min-height:300px;margin:0 12px}.journey-tick:nth-child(even) small{display:none}.journey-controls{grid-template-columns:1fr;padding:16px 12px}.journey-move .button{padding-inline:9px;font-size:.78rem}.journey-actions{display:grid;grid-template-columns:1fr 1fr}.journey-actions .button:first-child{grid-column:1/-1}.journey-investigation{padding:16px 12px}.journey-comparisons{grid-template-columns:1fr;padding:0 12px 16px}}
 @media(prefers-reduced-motion:reduce){.journey-traveler{transition:none}}
+
+/* Lesson 02: reference-2 is the literal visual layer. */
+.reference-journey-lab{width:100%;min-width:0;container:reference-journey/inline-size}
+.reference-journey-canvas{position:relative;width:100%;aspect-ratio:2762/1448;overflow:hidden;border-radius:18px;background:#071b35;box-shadow:0 18px 44px rgba(16,31,61,.18);outline:none}
+.reference-journey-canvas:focus-visible{outline:4px solid var(--cyan);outline-offset:3px}
+.reference-journey-canvas>img{position:absolute;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;user-select:none;pointer-events:none}
+.journey-reference-overlay{position:absolute;z-index:7;inset:0;width:100%;height:100%;pointer-events:none}
+.journey-reference-overlay polyline{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.journey-reference-overlay line{stroke:#1488e4;stroke-width:7;stroke-linecap:round;filter:drop-shadow(0 2px 2px rgba(255,255,255,.65))}
+.journey-reference-marker{position:absolute;z-index:10;width:clamp(10px,1.25cqi,18px);aspect-ratio:1;transform:translate(-50%,-50%);border:3px solid #fff;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(255,111,45,.35),0 4px 10px rgba(16,31,61,.3);transition:left .22s linear,top .22s linear;pointer-events:none}
+.journey-reference-marker span{position:absolute;inset:50%;width:2px;height:2px}
+.journey-reference-values output{position:absolute;z-index:15;right:2.4%;display:flex;align-items:center;justify-content:flex-end;width:9.4%;height:4.2%;padding:0 .3%;background:#fffdfa;color:#15223b;font-size:clamp(.48rem,1.12cqi,.92rem);font-weight:850;text-align:right;white-space:nowrap}
+.journey-reference-values #journeyDistance{top:9.5%;color:#f59d10}.journey-reference-values #journeyDisplacement{top:15.2%;color:#1679d6}.journey-reference-values #journeyDirectionValue{top:20.8%;color:#1679d6}.journey-reference-values #journeyTime{top:26.5%}.journey-reference-values #journeyAverage{top:32.1%;color:#46319a}
+.journey-hotspot{position:absolute;z-index:20;border:2px solid transparent;border-radius:10px;background:transparent;opacity:.015;cursor:pointer}
+.journey-hotspot:hover{opacity:1;border-color:rgba(8,169,214,.55);background:rgba(8,169,214,.06)}
+.journey-hotspot:focus-visible{opacity:1;outline:3px solid var(--cyan);outline-offset:2px}
+.journey-hint{left:59.1%;top:5.2%;width:6.7%;height:5%}.journey-walk{left:74.6%;top:43%;width:5.8%;height:10%}.journey-reset{left:81%;top:43%;width:5.3%;height:10%}.journey-clear{left:87.1%;top:43%;width:5.3%;height:10%}.journey-pause{left:93.1%;top:43%;width:5.3%;height:10%}.journey-show-path{left:59.6%;top:55.2%;width:11%;height:6%}
+.journey-tab-explore{left:2%;top:69.6%;width:10.6%;height:6.8%}.journey-tab-challenge{left:13%;top:69.6%;width:10.5%;height:6.8%}.journey-tab-results{left:24%;top:69.6%;width:9.4%;height:6.8%}
+.journey-reference-feedback{position:absolute;z-index:25;left:27%;top:6.3%;width:30%;margin:0;padding:.45% .7%;border-radius:8px;background:rgba(13,34,58,.92);color:#fff;font-size:clamp(.45rem,.95cqi,.78rem);font-weight:750;text-align:center}.journey-reference-feedback:empty{display:none}.journey-reference-feedback.success{color:#8ff0ca}
+@media(max-width:700px){.reference-journey-section{width:calc(100vw - 40px);max-width:calc(100vw - 40px)}.reference-journey-canvas{border-radius:11px}.journey-reference-values output{font-size:.43rem}.journey-reference-feedback{font-size:.42rem}}
+@media(prefers-reduced-motion:reduce){.journey-reference-marker{transition:none}}

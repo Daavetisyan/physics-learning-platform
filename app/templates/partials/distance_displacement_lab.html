@@ -1,0 +1,41 @@
+<section class="lesson-step-body reference-journey-section">
+  <div class="reference-journey-lab" data-simulation="distance-displacement" aria-label="Journey Lab: Distance versus Displacement">
+    <div class="reference-journey-canvas" id="journeyStage" tabindex="0" aria-describedby="journeyLabDescription">
+      <p class="sr-only" id="journeyLabDescription">An illustrated park path from a student at the start to a blue flag. Use Walk, arrow keys, or A and D to move. Live distance and displacement update in the right panel.</p>
+      <img src="/static/simulation/distance-displacement-reference.png" alt="Illustrated park journey laboratory with a winding path, start position, blue finish flag, live measurements, tools, and learning panels">
+
+      <div class="journey-reference-marker" id="journeyTraveler" aria-label="Current journey position"><span></span></div>
+      <svg class="journey-reference-overlay" viewBox="0 0 2762 1448" preserveAspectRatio="none" aria-hidden="true">
+        <polyline id="journeyPath" points=""></polyline>
+        <line id="journeyDisplacementArrow" x1="330" y1="630" x2="330" y2="630"></line>
+      </svg>
+
+      <div class="journey-reference-values" aria-live="polite">
+        <output id="journeyDistance">0.0 m</output>
+        <output id="journeyDisplacement">0.0 m</output>
+        <output id="journeyDirectionValue">—</output>
+        <output id="journeyTime">00:00</output>
+        <output id="journeyAverage">0.00 m/s</output>
+      </div>
+
+      <button class="journey-hotspot journey-hint" id="journeyHint" type="button" aria-label="Show mission hint"></button>
+      <button class="journey-hotspot journey-walk" id="journeyRight" type="button" aria-label="Walk forward"></button>
+      <button class="journey-hotspot journey-reset" id="journeyReset" type="button" aria-label="Reset path"></button>
+      <button class="journey-hotspot journey-clear" id="journeyClear" type="button" aria-label="Clear traveled path"></button>
+      <button class="journey-hotspot journey-pause" id="journeyRun" type="button" aria-label="Pause or resume journey"></button>
+      <button class="journey-hotspot journey-show-path" id="journeyShowPath" type="button" aria-label="Show or hide traveled path" aria-pressed="true"></button>
+      <button class="journey-hotspot journey-tab-explore" type="button" data-journey-tab="explore" aria-label="Explore"></button>
+      <button class="journey-hotspot journey-tab-challenge" type="button" data-journey-tab="challenge" aria-label="Challenge"></button>
+      <button class="journey-hotspot journey-tab-results" type="button" data-journey-tab="results" aria-label="Results"></button>
+
+      <button id="journeyLeft" type="button" class="sr-only">Move backward</button>
+      <button id="journeyAdd" type="button" class="sr-only">Add movement step</button>
+      <button id="journeyUndo" type="button" class="sr-only">Undo last step</button>
+      <button id="journeySave" type="button" class="sr-only">Save journey</button>
+      <button id="journeyCheck" type="button" class="sr-only">Check mission</button>
+      <select id="journeyDirection" class="sr-only" aria-label="Positive direction"><option value="right">Right is positive</option><option value="left">Left is positive</option></select>
+      <output id="journeyPosition" class="sr-only">0 m</output>
+      <p id="journeyTaskFeedback" class="journey-reference-feedback" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
