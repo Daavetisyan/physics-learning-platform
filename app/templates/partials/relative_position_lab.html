@@ -1,0 +1,50 @@
+<section class="lesson-step-body relative-lab-section">
+  <div class="position-line-lab" data-position-line-lab data-relative-position-lab aria-label="Interactive position and reference point laboratory">
+    <div class="line-scene" id="lineScene" tabindex="0" aria-describedby="lineSceneDescription">
+      <p class="sr-only" id="lineSceneDescription">An illustrated street. The student, dog, cyclist, and coffee shop align with a one-dimensional coordinate ruler.</p>
+      <img class="line-scene-background" src="/static/simulation/street-background.png" alt="Illustrated street with trees, benches, lamps, a coffee shop, pavement, road, skyline, and coordinate ruler">
+      <svg class="line-relation-guide" aria-hidden="true"><line id="lineRelationLine"></line><circle id="lineReferenceMarker" r="8"></circle><text id="lineRelationDistance"></text></svg>
+      <div class="line-reference-anchor line-coffee-anchor" id="lineCoffee" data-line-object="coffee"><span>Coffee shop</span></div>
+      <button type="button" class="line-object line-dog" id="lineDog" data-line-object="dog" aria-label="Select dog as reference"><img src="/static/simulation/standing_dog.png" alt=""><span>Dog</span></button>
+      <button type="button" class="line-object line-cyclist" id="lineCyclist" data-line-object="cyclist" aria-label="Select cyclist as reference"><img src="/static/simulation/moving_cyclist.png" alt=""><span>Cyclist</span></button>
+      <div class="line-object line-player" id="linePlayer" aria-label="Your position"><img src="/static/simulation/walking_student.png" alt=""><span>You</span></div>
+      <aside class="line-mission-card"><small>MISSION <strong id="lineMissionNumber">1</strong> OF 7</small><p id="lineMissionText">Stand 3 m to the right of the dog.</p></aside>
+      <div class="line-scene-actions"><span>Score <strong id="lineScore">0</strong></span><button type="button" id="lineHint">Hint</button><button type="button" id="lineReset" aria-label="Reset simulation">↺</button></div>
+      <div class="line-feedback" aria-live="polite"><strong id="lineRelationText"></strong><span id="lineDistanceText"></span></div>
+      <p class="line-message" id="lineMessage" aria-live="polite"></p>
+    </div>
+
+    <div class="line-control-deck">
+      <section class="line-move-panel" aria-label="Movement controls"><small>Your position</small><div><button type="button" data-line-move="left"><kbd>A</kbd> ← Left</button><output id="linePlayerCoordinate">+0.0 m</output><button type="button" data-line-move="right">Right → <kbd>D</kbd></button></div></section>
+      <section class="line-measure-panel"><small>Live measurements</small><div><span>Your coordinate <strong id="measurePlayer">+0.0 m</strong></span><span>Relative position <strong id="measureRelative">+0.0 m</strong></span><span>Physical separation <strong id="measureDistance">0.0 m</strong></span></div></section>
+      <section class="line-reference-panel"><small>Choose reference object</small><div role="group" aria-label="Choose reference object"><button type="button" data-line-reference="coffee">Coffee shop</button><button type="button" data-line-reference="dog" class="active">Dog</button><button type="button" data-line-reference="cyclist">Cyclist</button><button type="button" data-line-reference="origin">Ground origin</button></div></section>
+      <section class="line-cyclist-panel"><small>Cyclist</small><label>Speed <select id="lineCyclistSpeed"><option value="0.8">Slow</option><option value="1.5" selected>Medium</option><option value="2.5">Fast</option></select></label><button type="button" id="lineCyclistToggle" aria-pressed="false">▶ Play</button></section>
+      <section class="line-direction-panel"><small>Positive direction</small><div><button type="button" data-line-direction="right" class="active">Right is positive</button><button type="button" data-line-direction="left">Left is positive</button></div></section>
+      <button type="button" class="line-check-mission" id="lineCheckMission">Check mission</button>
+    </div>
+  </div>
+
+  <section class="lab-learning-panels">
+    <div class="lab-tabs" role="tablist" aria-label="Simulation learning panels">
+      <button type="button" role="tab" aria-selected="true" aria-controls="explorePanel" id="exploreTab">Explore</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="challengePanel" id="challengeTab">Challenge</button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="resultsPanel" id="resultsTab">Results</button>
+    </div>
+    <div class="lab-tab-panel active" id="explorePanel" role="tabpanel" aria-labelledby="exploreTab">
+      <div class="explore-card-grid">
+        <article><span>01</span><h3>Your task</h3><p>Move yourself, choose references, and complete each mission without guessing which number is a distance.</p></article>
+        <article><span>02</span><h3>What to observe</h3><p>Changing the origin changes coordinates. Reversing direction changes signs. Neither action moves an object.</p></article>
+        <article class="quick-reference"><span>03</span><h3>Quick reference</h3><p><i>x</i><sub>relative</sub> = <i>x</i><sub>you</sub> − <i>x</i><sub>reference</sub></p><p><i>d</i> = |<i>x</i><sub>you</sub> − <i>x</i><sub>reference</sub>|</p><p><i>x</i>′ = <i>x</i> − <i>q</i></p></article>
+        <article><span>04</span><h3>Pro tip</h3><p>Say the sign and the physical direction separately: “−3 m relative position, physically 3 m to the left.”</p></article>
+      </div>
+    </div>
+    <div class="lab-tab-panel" id="challengePanel" role="tabpanel" aria-labelledby="challengeTab" hidden>
+      <div class="challenge-summary"><div><strong id="challengeCompleted">0/7</strong><span>Completed</span></div><div><strong id="challengeAttempts">0</strong><span>Attempts</span></div><div><strong id="challengeTime">0:00</strong><span>Time</span></div><div><strong id="challengeAccuracy">—</strong><span>Accuracy</span></div></div>
+      <ol class="challenge-list" id="challengeList"><li>Fixed reference object</li><li>Changed origin</li><li>Signed relative position</li><li>Moving reference object</li><li>Reversed positive direction</li><li>Distance versus position</li><li>Combination tracking challenge</li></ol>
+    </div>
+    <div class="lab-tab-panel" id="resultsPanel" role="tabpanel" aria-labelledby="resultsTab" hidden>
+      <div class="results-lab-grid"><article><small>MISSIONS COMPLETED</small><strong id="resultsCompleted">0</strong></article><article><small>CORRECT ATTEMPTS</small><strong id="resultsCorrect">0</strong></article><article><small>AVERAGE ERROR</small><strong id="resultsError">—</strong></article><article><small>BEST STREAK</small><strong id="resultsStreak">0</strong></article></div>
+      <div class="concept-feedback"><h3>Concepts demonstrated</h3><ul id="conceptList"><li data-concept="relative">Signed relative position</li><li data-concept="distance">Physical separation stays non-negative</li><li data-concept="origin">Changing origin relabels coordinates</li><li data-concept="direction">Positive direction controls signs</li><li data-concept="moving">Moving reference objects update continuously</li></ul><p id="conceptFeedback">Begin with Mission 1. Experiment freely—incorrect attempts do not reduce your score.</p></div>
+    </div>
+  </section>
+</section>

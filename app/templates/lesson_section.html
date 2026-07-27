@@ -19,9 +19,17 @@
     </div>
 
     <nav class="lesson-step-list" aria-label="Lesson sections">
+      {% set nav = namespace(group='') %}
       {% for step in steps %}
+      {% if step.group != nav.group %}
+      {% if nav.group %}</div>{% endif %}
+      <div class="lesson-step-group" data-group="{{ step.group|lower }}">
+        <h3>{{ step.group }}</h3>
+        {% set nav.group = step.group %}
+      {% endif %}
       <a href="/lesson/{{ lesson.slug }}/{{ step.key }}"
-         class="lesson-step-link {% if step.key == current_step.key %}active{% endif %} {% if step.group == 'Theory' %}theory-step-link{% endif %}">
+         class="lesson-step-link {% if step.key == current_step.key %}active{% endif %}"
+         {% if step.key == current_step.key %}aria-current="step"{% endif %}>
         <span class="lesson-step-number">{{ "%02d"|format(loop.index) }}</span>
         <span class="lesson-step-copy">
           <small>{{ step.group }}</small>
@@ -29,6 +37,7 @@
         </span>
       </a>
       {% endfor %}
+      </div>
     </nav>
   </aside>
 
@@ -164,9 +173,9 @@
     </section>
 
     {% elif current_step.key == "simulation" %}
+    {% if content.simulation.type == "distance_displacement_journey" %}
     <section class="lesson-step-body">
       <p class="section-intro">{{ content.simulation.instruction }}</p>
-      {% if content.simulation.type == "distance_displacement_journey" %}
       <div class="journey-lab" data-simulation="distance-displacement">
         <header class="journey-lab-header">
           <div><span class="eyebrow">INTERACTIVE INVESTIGATION</span><h2>{{ content.simulation.title }}</h2></div>
@@ -190,42 +199,10 @@
         </div>
         <div id="journeyComparisons" class="journey-comparisons" aria-live="polite"><p>Save up to two journeys to compare their paths and endpoints.</p></div>
       </div>
-      {% else %}
-      <div class="simulation-card position-simulation" data-simulation="position-reference-frame">
-        <div class="position-stage">
-          <div class="axis-direction-label"><span id="negativeDirection">Negative</span><span id="positiveDirection">Positive →</span></div>
-          <div id="coordinateAxis" class="coordinate-axis" aria-label="Coordinate line from negative ten to positive ten meters">
-            <div class="axis-line"></div>
-            <div id="originMarker" class="origin-marker"><span>ORIGIN</span></div>
-            <div id="objectA" class="position-object object-a"><span>A</span></div>
-            <div id="objectB" class="position-object object-b"><span>B</span></div>
-          </div>
-          <div class="position-readouts">
-            <div><small>Object A coordinate</small><strong id="objectAReadout">-3 m</strong></div>
-            <div><small>Object B coordinate</small><strong id="objectBReadout">5 m</strong></div>
-            <div><small>A relative to B</small><strong id="relativeAReadout">-8 m</strong></div>
-            <div><small>Physical separation</small><strong id="separationReadout">8 m</strong></div>
-          </div>
-        </div>
-        <div class="position-controls">
-          <label>Object A physical position<input id="objectAPosition" type="range" min="-10" max="10" step="1" value="-3"><span id="objectAPositionLabel">-3 m from laboratory zero</span></label>
-          <label>Object B physical position<input id="objectBPosition" type="range" min="-10" max="10" step="1" value="5"><span id="objectBPositionLabel">5 m from laboratory zero</span></label>
-          <label>Choose the displayed origin<select id="referenceSelect"><option value="lab">Laboratory zero</option><option value="a">Object A</option><option value="b">Object B</option></select></label>
-          <label>Choose the positive direction<select id="positiveDirectionSelect"><option value="right">Right is positive</option><option value="left">Left is positive</option></select></label>
-        </div>
-        <div class="lab-observation">
-          <strong>Observation guide</strong>
-          <ol><li>Keep both objects fixed and change only the origin. Which values change?</li><li>Reverse the positive direction. What happens to signs and magnitudes?</li><li>Move one object. Which quantities now describe a real physical change?</li></ol>
-          <p id="frameExplanation">The laboratory zero is the origin and right is positive.</p>
-        </div>
-        <div class="prediction-box simulation-prediction" data-correct="{{ content.simulation.prediction_correct }}" data-explanation="{{ content.simulation.prediction_explanation }}">
-          <strong>Prediction challenge</strong><p>{{ content.simulation.prediction }}</p>
-          <div>{% for option in content.simulation.prediction_options %}<button type="button" class="chip simulation-prediction-option" data-answer="{{ option }}">{{ option }}</button>{% endfor %}</div>
-          <p class="simulation-prediction-feedback" aria-live="polite"></p>
-        </div>
-      </div>
-      {% endif %}
     </section>
+    {% else %}
+    {% include "partials/relative_position_lab.html" %}
+    {% endif %}
 
     {% elif current_step.key == "examples" %}
     <section class="lesson-step-body">
@@ -266,7 +243,7 @@
     {% elif current_step.key == "assistant" %}
     <section class="lesson-step-body">
       <div class="ai-card">
-        <div class="scientist-panel"><div class="scientist-avatar">{{ content.scientist.initials }}</div><strong>{{ content.scientist.name }}</strong><small>{{ content.scientist.subtitle }}</small><p>“{{ content.scientist.opening }}”</p></div>
+        <div class="scientist-panel"><div class="scientist-avatar"><img src="{{ url_for('static', path='brand/galileo-guide-realistic.png') }}" alt="Historically inspired portrait representing the Galileo AI educational guide"></div><strong>{{ content.scientist.name }}</strong><small>{{ content.scientist.subtitle }} · AI educational guide</small><p>“{{ content.scientist.opening }}”</p></div>
         <div class="chat-panel">
           <div class="mode-row"><button class="mode active" data-mode="explain">Explain</button><button class="mode" data-mode="guide">Guide me</button><button class="mode" data-mode="check">Check my work</button></div>
           <div id="chatMessages" class="chat-messages"><div class="bot-message">{% if lesson.slug == "distance-displacement" %}Ask about path length, endpoint change, signs, round trips, or paste a distance/displacement calculation.{% else %}Ask about reference points, origins, coordinates, signs, relative position, or frames of reference. You can also paste your calculation.{% endif %}</div></div>
@@ -342,5 +319,10 @@
   window.EXISTING_SCORE = {{ progress.score if progress and progress.score is not none else 'null' }};
 </script>
 <script src="{{ url_for('static', path='js/lesson.js') }}"></script>
-{% if content.simulation.type == "distance_displacement_journey" %}<script src="{{ url_for('static', path='js/distance-displacement-lab.js') }}"></script>{% endif %}
+{% if current_step.key == "simulation" and content.simulation.type == "distance_displacement_journey" %}
+<script src="{{ url_for('static', path='js/distance-displacement-lab.js') }}"></script>
+{% elif current_step.key == "simulation" %}
+<script src="{{ url_for('static', path='js/relative-position-physics.js') }}"></script>
+<script src="{{ url_for('static', path='js/relative-position-lab.js') }}"></script>
+{% endif %}
 {% endblock %}

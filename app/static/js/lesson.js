@@ -295,9 +295,58 @@ function setupLessonCompletion() {
   });
 }
 
+function setupLessonNavigationPosition() {
+  const activeStep = document.querySelector('.lesson-step-link[aria-current="step"]');
+  if (!activeStep) return;
+  const panel = document.querySelector('.lesson-player-nav');
+  const list = document.querySelector('.lesson-step-list');
+  const storageKey = `lesson-nav-position:${window.LESSON_SLUG || 'lesson'}`;
+  let savedPosition = null;
+  try {
+    savedPosition = JSON.parse(window.sessionStorage.getItem(storageKey));
+  } catch (error) {
+    savedPosition = null;
+  }
+  if (savedPosition) {
+    if (panel) panel.scrollTop = Number(savedPosition.panel) || 0;
+    if (list) list.scrollTop = Number(savedPosition.list) || 0;
+  }
+  document.querySelectorAll('.lesson-step-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      try {
+        window.sessionStorage.setItem(storageKey, JSON.stringify({
+          panel: panel ? panel.scrollTop : 0,
+          list: list ? list.scrollTop : 0,
+        }));
+      } catch (error) {
+        // Navigation remains functional when storage is unavailable.
+      }
+    });
+  });
+  if (savedPosition) return;
+  let scrollContainer = activeStep.parentElement;
+  while (scrollContainer && !scrollContainer.classList.contains('lesson-player-nav')) {
+    const style = window.getComputedStyle(scrollContainer);
+    const canScroll = scrollContainer.scrollHeight > scrollContainer.clientHeight
+      && ['auto', 'scroll'].includes(style.overflowY);
+    if (canScroll) break;
+    scrollContainer = scrollContainer.parentElement;
+  }
+  if (!scrollContainer) return;
+  const containerRect = scrollContainer.getBoundingClientRect();
+  const activeRect = activeStep.getBoundingClientRect();
+  if (activeRect.top >= containerRect.top && activeRect.bottom <= containerRect.bottom) return;
+  scrollContainer.scrollTop = Math.max(
+    0,
+    scrollContainer.scrollTop + activeRect.top - containerRect.top
+      - scrollContainer.clientHeight / 2 + activeRect.height / 2,
+  );
+}
+
 setupCheckpointCards();
 setupPositionSimulation();
 setupQuiz();
 setupChat();
 setupHomework();
 setupLessonCompletion();
+setupLessonNavigationPosition();
