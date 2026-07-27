@@ -137,7 +137,16 @@ def build_lesson_steps(content: dict) -> list[dict[str, str]]:
     steps.extend(
         [
             {"key": "video", "label": "Video explanation", "group": "Explore", "description": "Reinforce the theory with a filmed physical demonstration."},
-            {"key": "simulation", "label": "Interactive laboratory", "group": "Explore", "description": content.get("simulation", {}).get("instruction", "Investigate the lesson's central relationship.")},
+            {
+                "key": "simulation",
+                "label": "Interactive laboratory",
+                "group": "Explore",
+                "description": (
+                    content["simulation"]["instruction"]
+                    if content.get("simulation", {}).get("type") == "distance_displacement_journey"
+                    else "Change the reference frame and observe what changes and what stays invariant."
+                ),
+            },
             {"key": "examples", "label": "Worked examples", "group": "Apply", "description": "Follow complete reasoning from the physical situation to the answer."},
             {"key": "misconceptions", "label": "Common misconceptions", "group": "Apply", "description": "Replace common but incorrect ideas with precise physics."},
             *([{"key": "guided-practice", "label": "Guided practice", "group": "Practice", "description": "Use progressive hints to organize complete solutions."}] if content.get("guided_practice") else []),
