@@ -223,3 +223,74 @@ def test_seed_initialization_is_idempotent():
             "assignments": db.scalar(select(func.count(TutorStudentAssignment.id))),
         }
     assert before == after
+
+
+def test_authenticated_lesson_two_routes_and_content_depth():
+    from app.distance_displacement_content import DISTANCE_DISPLACEMENT as content
+    from app.main import build_lesson_steps
+
+    client = TestClient(app)
+    login(client, "grade8@student.local", "VectorDemo8!")
+    course = client.get("/course/foundations-of-physics")
+    assert course.status_code == 200
+    assert "Distance and Displacement" in course.text
+    assert course.text.count("Production") >= 2
+
+    steps = build_lesson_steps(content)
+    assert len(steps) == 22
+    for step in steps:
+        response = client.get(f"/lesson/distance-displacement/{step['key']}")
+        assert response.status_code == 200, step["key"]
+        assert step["label"] in response.text
+
+    theory_words = sum(len(paragraph.split()) for chapter in content["theory_chapters"] for paragraph in chapter["paragraphs"])
+    assert 1800 <= theory_words <= 2400
+    assert len(content["theory_chapters"]) + len(content["additional_checks"]) >= 10
+    assert len(content["worked_examples"]) >= 7
+    assert len(content["misconceptions"]) >= 7
+    assert len(content["guided_practice"]) >= 10
+    assert sum(len(group["questions"]) for group in content["practice_groups"]) >= 15
+    assert len(content["quiz"]) >= 10
+
+
+def test_authenticated_lesson_two_lab_math_assessment_homework_and_ai():
+    from app.distance_displacement import displacement, displacement_magnitude, total_distance
+
+    assert total_distance([0, 10, 6]) == 14
+    assert displacement([0, 10, 6]) == 6
+    assert total_distance([2, 9, 2]) == 14
+    assert displacement([2, 9, 2]) == 0
+    assert displacement([6, -2]) == -8
+    assert displacement([6, -2], "left") == 8
+    assert displacement_magnitude([6, -2]) == 8
+
+    client = TestClient(app)
+    login(client, "grade8@student.local", "VectorDemo8!")
+    simulation = client.get("/lesson/distance-displacement/simulation")
+    assert 'data-simulation="distance-displacement"' in simulation.text
+    assert "journeyUndo" in simulation.text and "journeyDirection" in simulation.text
+    assessment = client.get("/lesson/distance-displacement/assessment")
+    assert assessment.text.count("quiz-question-card") >= 10
+    assert assessment.text.count('data-question-type="written_review"') == 2
+    homework = client.get("/lesson/distance-displacement/homework")
+    assert "Distance and Displacement Homework" in homework.text
+    assert "Homework workspace coming soon" in homework.text
+    assert 'aria-disabled="true"' in homework.text
+    ai = client.post("/api/ai-chat", json={"message": "Why is displacement zero on a round trip?", "mode": "explain", "lesson_slug": "distance-displacement"})
+    assert ai.status_code == 200
+    assert "distance" in ai.json()["reply"].lower()
+
+
+def test_lesson_two_progress_is_owned_by_authenticated_student():
+    first = TestClient(app)
+    second = TestClient(app)
+    login(first, "grade7@student.local", "VectorDemo7!")
+    login(second, "grade9@student.local", "VectorDemo9!")
+    assert first.post("/api/progress/distance-displacement", json={"status": "completed", "score": 88}).status_code == 200
+    with SessionLocal() as db:
+        first_profile = db.scalar(select(StudentProfile).where(StudentProfile.email == "grade7@student.local"))
+        second_profile = db.scalar(select(StudentProfile).where(StudentProfile.email == "grade9@student.local"))
+        lesson_progress = list(db.scalars(select(Progress).where(Progress.student_id == first_profile.id)).all())
+        other_progress = list(db.scalars(select(Progress).where(Progress.student_id == second_profile.id)).all())
+        assert any(row.score == 88 for row in lesson_progress)
+        assert not any(row.score == 88 for row in other_progress)

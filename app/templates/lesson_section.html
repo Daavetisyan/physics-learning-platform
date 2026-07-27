@@ -74,8 +74,11 @@
       <div class="prerequisite-box">
         <h3>Before you begin</h3>
         <ul>{% for item in content.prerequisites %}<li>{{ item }}</li>{% endfor %}</ul>
+        {% if content.prerequisite_lesson %}<p><strong>Prerequisite:</strong> <a href="/lesson/{{ content.prerequisite_lesson.slug }}">{{ content.prerequisite_lesson.title }}</a></p>{% endif %}
+        {% if content.next_lesson %}<p><strong>Next:</strong> {{ content.next_lesson.title }} <span class="build-badge building">{{ content.next_lesson.status|title }}</span></p>{% endif %}
       </div>
 
+      {% if content.diagnostic is mapping %}
       <div class="step-block">
         <span class="eyebrow">DIAGNOSTIC</span>
         <h2>Start with your current idea</h2>
@@ -89,6 +92,20 @@
           <p class="checkpoint-feedback" aria-live="polite"></p>
         </div>
       </div>
+      {% endif %}
+    </section>
+
+    {% elif current_step.key == "prerequisite-review" %}
+    <section class="lesson-step-body">
+      <p class="section-intro">Lesson 1 supplied the coordinate language used here. Review these ideas before comparing a route with its endpoints.</p>
+      <div class="review-grid">{% for item in content.prerequisite_review %}<article class="review-card"><span>{{ "%02d"|format(loop.index) }}</span><h2>{{ item.title }}</h2><p>{{ item.body }}</p></article>{% endfor %}</div>
+      <div class="key-idea"><strong>Connection</strong><span>Position describes where an object is. Distance and displacement describe different features of the journey between positions.</span></div>
+    </section>
+
+    {% elif current_step.key == "diagnostic" %}
+    <section class="lesson-step-body">
+      <p class="section-intro">These questions do not block your progress. Use the feedback to decide whether to revisit the prerequisite review.</p>
+      <div class="diagnostic-list">{% for item in content.diagnostic %}<div class="checkpoint-card diagnostic-card" data-correct="{{ item.correct }}" data-explanation="{{ item.explanation }}"><span class="checkpoint-label">DIAGNOSTIC {{ loop.index }}</span><h3>{{ item.question }}</h3><div class="checkpoint-options">{% for option in item.options %}<button type="button" class="checkpoint-option" data-answer="{{ option }}">{{ option }}</button>{% endfor %}</div><p class="checkpoint-feedback" aria-live="polite"></p></div>{% endfor %}</div>
     </section>
 
     {% elif current_step.key == "vocabulary" %}
@@ -149,6 +166,31 @@
     {% elif current_step.key == "simulation" %}
     <section class="lesson-step-body">
       <p class="section-intro">{{ content.simulation.instruction }}</p>
+      {% if content.simulation.type == "distance_displacement_journey" %}
+      <div class="journey-lab" data-simulation="distance-displacement">
+        <header class="journey-lab-header">
+          <div><span class="eyebrow">INTERACTIVE INVESTIGATION</span><h2>{{ content.simulation.title }}</h2></div>
+          <div class="journey-live" aria-live="polite"><span>Distance <strong id="journeyDistance">0 m</strong></span><span>Displacement <strong id="journeyDisplacement">0 m</strong></span></div>
+        </header>
+        <div class="journey-stage" id="journeyStage" tabindex="0" aria-label="Journey number line. Use left and right arrow keys to move.">
+          <div class="journey-direction"><span id="journeyNegative">← negative</span><span id="journeyPositive">positive →</span></div>
+          <div class="journey-axis" aria-hidden="true">{% for tick in range(-10, 11) %}<span class="journey-tick" style="left: {{ (tick + 10) * 5 }}%"><i></i><small>{{ tick }}</small></span>{% endfor %}</div>
+          <div id="journeyPath" class="journey-path"></div><div id="journeyDisplacementArrow" class="journey-displacement-arrow"><span>Δx</span></div>
+          <div id="journeyStart" class="journey-marker start"><span>Start</span></div><div id="journeyTraveler" class="journey-traveler"><span aria-hidden="true">→</span><strong>YOU</strong></div>
+        </div>
+        <div class="journey-controls">
+          <div class="journey-move"><button type="button" id="journeyLeft" class="button secondary">← Move left</button><strong id="journeyPosition">0 m</strong><button type="button" id="journeyRight" class="button secondary">Move right →</button></div>
+          <div class="journey-actions"><button type="button" id="journeyAdd" class="button primary">Add movement step</button><button type="button" id="journeyUndo" class="button secondary">Undo</button><button type="button" id="journeyRun" class="button secondary">Run journey</button><button type="button" id="journeySave" class="button secondary">Save for comparison</button><button type="button" id="journeyReset" class="button secondary">Reset</button></div>
+          <label class="journey-direction-control">Positive direction<select id="journeyDirection"><option value="right">Right is positive</option><option value="left">Left is positive</option></select></label>
+        </div>
+        <div class="journey-investigation">
+          <div><label for="journeyPrediction"><strong>Predict before testing</strong></label><textarea id="journeyPrediction" rows="2" placeholder="I predict distance will… because…"></textarea></div>
+          <div class="journey-task"><span id="journeyTaskCount">Task 1 of {{ content.simulation.tasks|length }}</span><p id="journeyTask">{{ content.simulation.tasks[0] }}</p><button type="button" id="journeyCheck" class="button primary">Check task</button><p id="journeyTaskFeedback" aria-live="polite"></p></div>
+          <div><label for="journeyExplanation"><strong>Explain what you observed</strong></label><textarea id="journeyExplanation" rows="2" placeholder="The result shows that…"></textarea></div>
+        </div>
+        <div id="journeyComparisons" class="journey-comparisons" aria-live="polite"><p>Save up to two journeys to compare their paths and endpoints.</p></div>
+      </div>
+      {% else %}
       <div class="simulation-card position-simulation" data-simulation="position-reference-frame">
         <div class="position-stage">
           <div class="axis-direction-label"><span id="negativeDirection">Negative</span><span id="positiveDirection">Positive →</span></div>
@@ -182,6 +224,7 @@
           <p class="simulation-prediction-feedback" aria-live="polite"></p>
         </div>
       </div>
+      {% endif %}
     </section>
 
     {% elif current_step.key == "examples" %}
@@ -190,7 +233,7 @@
       {% for example in content.worked_examples %}
       <details class="example-card detailed-example" {% if loop.first %}open{% endif %}>
         <summary><span>{{ example.title }}</span><small>{{ example.question }}</small></summary>
-        <div class="example-body"><h3>Reasoning steps</h3><ol>{% for step in example.steps %}<li>{{ step }}</li>{% endfor %}</ol><div class="example-answer"><strong>Answer</strong><span>{{ example.answer }}</span></div><p><strong>Why this works:</strong> {{ example.reasoning }}</p></div>
+        <div class="example-body">{% if example.known %}<p><strong>Known information:</strong> {{ example.known }}</p>{% endif %}<h3>Reasoning steps</h3><ol>{% for step in example.steps %}<li>{{ step }}</li>{% endfor %}</ol><div class="example-answer"><strong>Answer</strong><span>{{ example.answer }}</span></div><p><strong>Why this works:</strong> {{ example.reasoning }}</p>{% if example.common_error %}<p class="common-error-note"><strong>Common error:</strong> {{ example.common_error }}</p>{% endif %}</div>
       </details>
       {% endfor %}
     </section>
@@ -199,9 +242,15 @@
     <section class="lesson-step-body">
       <div class="misconception-list">
         {% for item in content.misconceptions %}
-        <article class="misconception-card"><div class="myth-label">NOT QUITE</div><h3>{{ item.myth }}</h3><div class="correction"><strong>Better physics:</strong> {{ item.correction }}</div></article>
+        <article class="misconception-card"><div class="myth-label">NOT QUITE</div><h3>{{ item.myth }}</h3>{% if item.why %}<p><strong>Why it seems reasonable:</strong> {{ item.why }}</p>{% endif %}<div class="correction"><strong>Better physics:</strong> {{ item.correction }}</div>{% if item.example %}<p><strong>Correcting example:</strong> {{ item.example }}</p>{% endif %}{% if item.quick_check %}<p class="quick-check"><strong>Quick check:</strong> {{ item.quick_check }}</p>{% endif %}</article>
         {% endfor %}
       </div>
+    </section>
+
+    {% elif current_step.key == "guided-practice" %}
+    <section class="lesson-step-body">
+      <p class="section-intro">Try each problem first. Open one hint at a time; the first hint identifies a decision without revealing the full solution.</p>
+      <div class="guided-practice-list">{% for item in content.guided_practice %}<article class="guided-problem"><span class="eyebrow">GUIDED PROBLEM {{ loop.index }}</span><h2>{{ item.question }}</h2><div class="progressive-hints">{% for hint in item.hints %}<details><summary>Hint {{ loop.index }}</summary><p>{{ hint }}</p></details>{% endfor %}</div></article>{% endfor %}</div>
     </section>
 
     {% elif current_step.key == "practice" %}
@@ -220,7 +269,8 @@
         <div class="scientist-panel"><div class="scientist-avatar">{{ content.scientist.initials }}</div><strong>{{ content.scientist.name }}</strong><small>{{ content.scientist.subtitle }}</small><p>“{{ content.scientist.opening }}”</p></div>
         <div class="chat-panel">
           <div class="mode-row"><button class="mode active" data-mode="explain">Explain</button><button class="mode" data-mode="guide">Guide me</button><button class="mode" data-mode="check">Check my work</button></div>
-          <div id="chatMessages" class="chat-messages"><div class="bot-message">Ask about reference points, origins, coordinates, signs, relative position, or frames of reference. You can also paste your calculation.</div></div>
+          <div id="chatMessages" class="chat-messages"><div class="bot-message">{% if lesson.slug == "distance-displacement" %}Ask about path length, endpoint change, signs, round trips, or paste a distance/displacement calculation.{% else %}Ask about reference points, origins, coordinates, signs, relative position, or frames of reference. You can also paste your calculation.{% endif %}</div></div>
+          {% if content.scientist.suggested_prompts %}<div class="suggested-prompts">{% for prompt in content.scientist.suggested_prompts %}<button type="button" class="suggested-prompt">{{ prompt }}</button>{% endfor %}</div>{% endif %}
           <form id="chatForm"><div class="chat-input"><input id="chatInput" aria-label="Question for the AI scientist" placeholder="Type or use voice…"><button id="voiceButton" type="button" title="Voice input" aria-label="Start voice input">●</button><button type="submit">Send</button></div></form>
         </div>
       </div>
@@ -228,16 +278,18 @@
 
     {% elif current_step.key == "assessment" %}
     <section class="lesson-step-body assessment-step">
-      <p class="section-intro">A score of 75% unlocks lesson completion. Each question is presented as a clear card; the title now stays inside the card rather than cutting through its border.</p>
+      <p class="section-intro">A score of {{ content.mastery_threshold|default(75) }}% demonstrates mastery. Automatically gradable responses receive immediate feedback; written reasoning is marked for review.</p>
       <form id="quizForm" class="quiz-form quiz-card-list">
         {% for q in content.quiz %}
-        <fieldset class="quiz-question-card" data-correct="{{ q.correct }}">
+        <fieldset class="quiz-question-card" data-correct="{{ q.correct or '' }}" data-question-type="{{ q.type|default('multiple_choice') }}" data-objective="{{ q.objective|default('general') }}">
           <legend><span class="quiz-question-index">{{ loop.index }}</span><span>{{ q.question }}</span></legend>
-          <div class="quiz-options">
+          {% if q.type == "written_review" %}
+          <label class="written-answer-label">Your reasoning<textarea name="{{ q.id }}" rows="5" placeholder="Explain your reasoning with physics terms, units, and direction."></textarea></label>
+          {% else %}<div class="quiz-options">
             {% for option in q.options %}
             <label class="quiz-option"><input type="radio" name="{{ q.id }}" value="{{ option }}"><span>{{ option }}</span></label>
             {% endfor %}
-          </div>
+          </div>{% endif %}
           <p class="question-feedback" aria-live="polite"></p>
         </fieldset>
         {% endfor %}
@@ -247,18 +299,23 @@
 
     {% elif current_step.key == "homework" %}
     <section class="lesson-step-body">
+      {% if content.homework.workspace_available == false %}
+      <div class="homework-card compact-homework-card"><div><span class="eyebrow">HOMEWORK ASSIGNED</span><h2>{{ content.homework.title }}</h2><p>Estimated time: {{ content.homework.estimated_time }}{% if content.homework.due_date %} · Due {{ content.homework.due_date }}{% endif %}</p><span class="content-status">{{ content.homework.status }}</span></div><button class="button secondary" type="button" disabled aria-disabled="true">Homework workspace coming soon</button></div>
+      <p class="empty-state-note">The dedicated Homework feature is being developed separately. Assignment metadata is preserved so it can be connected without changing this lesson.</p>
+      {% else %}
       <div class="homework-card expanded-homework">
         <h2>{{ content.homework.title }}</h2><p>{{ content.homework.instructions }}</p><ol>{% for question in content.homework.questions %}<li>{{ question }}</li>{% endfor %}</ol>
         <textarea id="homeworkAnswer" rows="14" placeholder="{{ content.homework.submission_prompt }}"></textarea>
         <div class="homework-actions"><span>Minimum submission: definitions, three coordinates, two calculations, and written interpretations.</span><button id="submitHomework" class="button primary">Submit homework</button></div><p id="homeworkResult" aria-live="polite"></p>
       </div>
+      {% endif %}
     </section>
 
     {% elif current_step.key == "summary" %}
     <section class="lesson-step-body">
       <div class="summary-card"><ul>{% for item in content.summary %}<li>{{ item }}</li>{% endfor %}</ul></div>
       <div class="reflection-card"><strong>Exit reflection</strong><p>{{ content.reflection }}</p></div>
-      <div class="lesson-complete lesson-complete-inline"><div><span class="eyebrow">READY TO CONTINUE?</span><h2>Save your mastery</h2><p>Reach at least 75% on the assessment before marking the lesson finished.</p></div><button id="completeLesson" class="button primary">Mark lesson complete</button></div>
+      <div class="lesson-complete lesson-complete-inline"><div><span class="eyebrow">READY TO CONTINUE?</span><h2>Save your mastery</h2><p>Reach at least {{ content.mastery_threshold|default(75) }}% on the assessment before marking the lesson finished.</p></div><button id="completeLesson" class="button primary">Mark lesson complete</button></div>
     </section>
     {% endif %}
 
@@ -281,8 +338,9 @@
 {% block scripts %}
 <script>
   window.LESSON_SLUG = "{{ lesson.slug }}";
-  window.MASTERY_THRESHOLD = 75;
+  window.MASTERY_THRESHOLD = {{ content.mastery_threshold|default(75) }};
   window.EXISTING_SCORE = {{ progress.score if progress and progress.score is not none else 'null' }};
 </script>
 <script src="{{ url_for('static', path='js/lesson.js') }}"></script>
+{% if content.simulation.type == "distance_displacement_journey" %}<script src="{{ url_for('static', path='js/distance-displacement-lab.js') }}"></script>{% endif %}
 {% endblock %}

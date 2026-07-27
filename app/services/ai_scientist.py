@@ -92,10 +92,39 @@ def _speed_response(message: str, mode: str) -> str:
     return "Average speed is total distance divided by total time. Average velocity is displacement divided by total time and needs direction."
 
 
+def _distance_displacement_response(message: str, mode: str) -> str:
+    lower = message.lower()
+    nums = _extract_numbers(message)
+    if mode == "guide":
+        return (
+            "First identify the initial and final positions. Next list every turning point in path order. "
+            "Does the question ask for total path length or endpoint change? For distance, add the absolute length of each segment. "
+            "For displacement, use Δx = x_f − x_i. What does the resulting sign mean under the stated positive direction?"
+        )
+    if mode == "check":
+        if len(nums) >= 2:
+            initial, final = nums[0], nums[-1]
+            result = final - initial
+            return (
+                f"Using the first value as x_i and the last as x_f gives Δx = {final:g} − ({initial:g}) = {result:g}. "
+                "That checks displacement only. To check distance, send every position or movement segment in order and include the unit."
+            )
+        return "Show x_i, x_f, every turning point, the positive direction, and your unit. I will check the subtraction order, segment magnitudes, and sign interpretation."
+    if "zero" in lower or "round" in lower:
+        return "A round trip can have zero displacement because x_f equals x_i, while distance remains positive because the complete outward and return paths are added."
+    if "negative" in lower:
+        return "Negative displacement means the change points opposite the chosen positive direction. It is not negative distance: distance is the nonnegative total path length."
+    if "distance" in lower and "displacement" in lower:
+        return "Distance follows and adds the entire path. Displacement compares only the endpoints with Δx = x_f − x_i and includes direction. Tell me the route and endpoints, and we can calculate both."
+    return "Name the initial position, final position, every turning point, positive direction, and unit. Then decide whether you need total path length or signed change in position."
+
+
 def answer_as_scientist(message: str, mode: str = "explain", lesson_slug: str = "position-reference-points") -> str:
     text = message.strip()
     if not text:
         return "Ask about the exact idea, diagram, sign, unit, or calculation that is confusing."
     if lesson_slug == "position-reference-points":
         return _position_response(text, mode)
+    if lesson_slug == "distance-displacement":
+        return _distance_displacement_response(text, mode)
     return _speed_response(text, mode)

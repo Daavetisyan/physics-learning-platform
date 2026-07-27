@@ -7,7 +7,7 @@ COURSE = {
 
 LESSONS = [
     {"slug": "position-reference-points", "title": "Position and Reference Points", "unit": "Motion and Graphs", "summary": "Build the coordinate language needed to describe location and motion precisely.", "duration": 80},
-    {"slug": "distance-displacement", "title": "Distance and Displacement", "unit": "Motion and Graphs", "summary": "Separate total path length from the change in position.", "duration": 35},
+    {"slug": "distance-displacement", "title": "Distance and Displacement", "unit": "Motion and Graphs", "summary": "Separate total path length from change in position, and use direction to interpret displacement.", "duration": 85},
     {"slug": "speed-velocity", "title": "Speed and Velocity", "unit": "Motion and Graphs", "summary": "Calculate speed and explain why velocity also includes direction.", "duration": 45},
     {"slug": "acceleration", "title": "Acceleration", "unit": "Motion and Graphs", "summary": "Connect changing velocity to acceleration.", "duration": 40},
     {"slug": "distance-time-graphs", "title": "Distance–Time Graphs", "unit": "Motion and Graphs", "summary": "Interpret slope and motion patterns on distance–time graphs.", "duration": 45},

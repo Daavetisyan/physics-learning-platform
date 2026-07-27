@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .distance_displacement_content import DISTANCE_DISPLACEMENT
+
 POSITION_REFERENCE_POINTS = {
     "status": "production",
     "scientist": {
@@ -464,4 +466,5 @@ POSITION_REFERENCE_POINTS = {
 
 LESSON_CONTENTS = {
     "position-reference-points": POSITION_REFERENCE_POINTS,
+    "distance-displacement": DISTANCE_DISPLACEMENT,
 }

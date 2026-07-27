@@ -122,18 +122,25 @@ app.add_middleware(
 
 
 def build_lesson_steps(content: dict) -> list[dict[str, str]]:
+    detailed_foundation = bool(content.get("prerequisite_review"))
     steps = [
-        {"key": "overview", "label": "Start and diagnostic", "group": "Start", "description": "Understand the lesson goal, prerequisites, and your current idea."},
-        {"key": "vocabulary", "label": "Physics vocabulary", "group": "Foundation", "description": "Learn the exact language used throughout the lesson."},
+        {"key": "overview", "label": "Lesson introduction" if detailed_foundation else "Start and diagnostic", "group": "Start", "description": "Understand the lesson goal, course relationship, and learning objectives."},
     ]
+    if detailed_foundation:
+        steps.extend([
+            {"key": "prerequisite-review", "label": "Prerequisite review", "group": "Foundation", "description": "Reconnect position, coordinates, origins, and direction to the new topic."},
+            {"key": "diagnostic", "label": "Diagnostic questions", "group": "Foundation", "description": "Check your current thinking without affecting lesson access."},
+        ])
+    steps.append({"key": "vocabulary", "label": "Key vocabulary" if detailed_foundation else "Physics vocabulary", "group": "Foundation", "description": "Learn the exact language used throughout the lesson."})
     for chapter in content.get("theory_chapters", []):
         steps.append({"key": f"theory-{chapter['number']}", "label": chapter["heading"], "group": "Theory", "description": chapter["lead"]})
     steps.extend(
         [
             {"key": "video", "label": "Video explanation", "group": "Explore", "description": "Reinforce the theory with a filmed physical demonstration."},
-            {"key": "simulation", "label": "Interactive laboratory", "group": "Explore", "description": "Change the reference frame and observe what changes and what stays invariant."},
+            {"key": "simulation", "label": "Interactive laboratory", "group": "Explore", "description": content.get("simulation", {}).get("instruction", "Investigate the lesson's central relationship.")},
             {"key": "examples", "label": "Worked examples", "group": "Apply", "description": "Follow complete reasoning from the physical situation to the answer."},
             {"key": "misconceptions", "label": "Common misconceptions", "group": "Apply", "description": "Replace common but incorrect ideas with precise physics."},
+            *([{"key": "guided-practice", "label": "Guided practice", "group": "Practice", "description": "Use progressive hints to organize complete solutions."}] if content.get("guided_practice") else []),
             {"key": "practice", "label": "Independent practice", "group": "Practice", "description": "Solve questions at foundation, standard, and challenge levels."},
             {"key": "assistant", "label": f"Ask {content['scientist']['name']}", "group": "Support", "description": "Ask for another explanation, guided help, or feedback on your work."},
             {"key": "assessment", "label": "Mastery assessment", "group": "Check", "description": "Demonstrate complete understanding and identify what to revisit."},

@@ -142,6 +142,18 @@ function setupQuiz() {
     let answered = 0;
 
     fields.forEach((field) => {
+      if (field.dataset.questionType === 'written_review') {
+        const response = field.querySelector('textarea').value.trim();
+        const feedback = field.querySelector('.question-feedback');
+        if (!response) {
+          setFeedback(feedback, 'Write a reasoned response before submitting.', false);
+          return;
+        }
+        answered += 1;
+        field.classList.add('question-awaiting');
+        setFeedback(feedback, 'Submitted for review. This written explanation is not automatically marked correct.', true);
+        return;
+      }
       const selected = field.querySelector('input:checked');
       const feedback = field.querySelector('.question-feedback');
       field.classList.remove('question-correct', 'question-incorrect');
@@ -165,11 +177,12 @@ function setupQuiz() {
       return;
     }
 
-    lastQuizScore = Math.round((100 * correct) / fields.length);
+    const automaticallyGradable = fields.filter((field) => field.dataset.questionType !== 'written_review').length;
+    lastQuizScore = Math.round((100 * correct) / automaticallyGradable);
     const threshold = Number(window.MASTERY_THRESHOLD || 75);
     const message = lastQuizScore >= threshold
-      ? `Mastery reached: ${correct}/${fields.length} (${lastQuizScore}%). Review any missed question before continuing.`
-      : `You scored ${correct}/${fields.length} (${lastQuizScore}%). Revisit the highlighted theory chapters and try again.`;
+      ? `Automatic score: ${correct}/${automaticallyGradable} (${lastQuizScore}%). Written responses are awaiting review. Review any missed objective before continuing.`
+      : `Automatic score: ${correct}/${automaticallyGradable} (${lastQuizScore}%). Revisit Calculating displacement, Direction and signs, or Round trips based on the highlighted questions, then try again.`;
     const result = document.getElementById('quizResult');
     setFeedback(result, message, lastQuizScore >= threshold);
 
@@ -195,6 +208,12 @@ function setupChat() {
   });
 
   const chatInput = document.getElementById('chatInput');
+  document.querySelectorAll('.suggested-prompt').forEach((button) => {
+    button.addEventListener('click', () => {
+      chatInput.value = button.textContent;
+      chatInput.focus();
+    });
+  });
   const chatMessages = document.getElementById('chatMessages');
   function addMessage(text, kind) {
     const div = document.createElement('div');

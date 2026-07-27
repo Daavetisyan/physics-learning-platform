@@ -2,9 +2,9 @@
 
 A working full-stack prototype for a detailed Grades 7–9 physics learning and tutoring platform.
 
-## Current production lesson
+## Current production lessons
 
-**Lesson 1: Position and Reference Points** has been rebuilt as the standard for future lessons. It contains:
+**Lesson 1: Position and Reference Points** established the production standard. **Lesson 2: Distance and Displacement** now follows it as a complete authenticated 70–90 minute lesson.
 
 - Five measurable learning objectives and prerequisite review
 - Diagnostic opening question
@@ -21,7 +21,7 @@ A working full-stack prototype for a detailed Grades 7–9 physics learning and 
 - Seven-part real-world homework investigation
 - Summary and exit reflection
 
-Other lessons remain visible in the course map but are intentionally marked as not yet built to the new production standard.
+Lesson 2 adds 22 focused section routes, approximately 1,817 theory words, 5 diagnostics, 10 checks, 12 vocabulary terms, 7 worked examples, 7 misconception investigations, 10 guided problems, 17 independent problems, and a 10-question mastery assessment. Its Journey Lab supports multi-stage routes, undo, animation, direction reversal, and saved-journey comparison. Progress is owned by the authenticated student. Lesson 3 remains marked Building.
 
 ## Account and academic-profile foundation
 
@@ -63,7 +63,7 @@ Seeded curricula:
 - US Physical Science — Grades 7–9
 - Vector Academy Physics Pathway
 
-The US pathway represents the intended academic market, not standards certification or a claim of complete compliance. Courses are connected through enrollments. A lesson keeps one shared concept record and may expose curriculum/grade/learning-level variants without copying the shared lesson title and assets. `Position and Reference Points` remains published for grades 7–9 at all three learning levels.
+The US pathway represents the intended academic market, not standards certification or a claim of complete compliance. Courses are connected through enrollments. A lesson keeps one shared concept record and may expose curriculum/grade/learning-level variants without copying the shared lesson title and assets. `Position and Reference Points` and `Distance and Displacement` are published for grades 7–9 at all three learning levels.
 
 ### Development accounts
 
@@ -116,7 +116,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-Open `http://127.0.0.1:8000` and select **Lesson 1: Position and Reference Points**. The lesson now opens as a sequence of focused sections rather than one extremely long page.
+Open `http://127.0.0.1:8000`, log in with a development student account, and select Lesson 1 or **Lesson 2: Distance and Displacement**. Each lesson opens as focused sections rather than one extremely long page.
 
 ## Update an existing local copy
 
