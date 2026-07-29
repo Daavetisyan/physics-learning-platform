@@ -3,11 +3,14 @@
   if (!lab) return;
 
   const route = [
-    [110, 475], [145, 470], [180, 466], [218, 472], [255, 480],
-    [292, 475], [330, 455], [365, 430], [400, 413], [440, 412],
-    [482, 420], [525, 423], [565, 410], [605, 385], [640, 350],
-    [670, 310], [700, 270], [735, 238], [775, 220], [815, 212],
-    [855, 198], [892, 175],
+    // Centerline of the illustrated path, from the lower-left entrance to the flag.
+    [58, 540], [87, 521], [116, 501], [145, 487], [174, 474],
+    [203, 469], [232, 469], [261, 459], [290, 444], [319, 421],
+    [348, 389], [377, 369], [406, 358], [435, 357], [464, 362],
+    [493, 373], [522, 385], [551, 397], [580, 405], [609, 412],
+    [638, 414], [667, 413], [696, 408], [725, 397], [754, 383],
+    [783, 363], [807, 341], [827, 316], [837, 290], [832, 263],
+    [818, 237], [800, 212], [794, 188], [806, 166],
   ];
   const routeMeters = 32.5;
   const directMeters = 9.4;
@@ -52,6 +55,7 @@
 
     $('journeyTraveler').style.left = `${x / 10}%`;
     $('journeyTraveler').style.top = `${y / 5.6}%`;
+    $('journeyTraveler').classList.toggle('at-finish', state.index === route.length - 1);
     $('journeyPath').setAttribute('points', routePoints());
     $('journeyPath').style.opacity = state.showPath ? '1' : '0';
     $('journeyDisplacementArrow').setAttribute('x2', x);
