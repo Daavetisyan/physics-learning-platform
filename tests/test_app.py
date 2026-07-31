@@ -335,6 +335,13 @@ def test_lesson_three_routes_sequence_and_production_depth():
     assert sum(len(group["questions"]) for group in content["practice_groups"]) >= 18
     assert len(content["quiz"]) >= 12
 
+    legacy = client.get("/lesson/speed-velocity", follow_redirects=False)
+    assert legacy.status_code == 308
+    assert legacy.headers["location"] == "/lesson/speed"
+    legacy_section = client.get("/lesson/speed-velocity/simulation", follow_redirects=False)
+    assert legacy_section.status_code == 308
+    assert legacy_section.headers["location"] == "/lesson/speed/simulation"
+
 
 def test_speed_physics_rejects_invalid_values_and_includes_stops():
     import pytest

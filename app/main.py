@@ -574,6 +574,8 @@ def course_page(course_slug: str, request: Request, db: Session = Depends(get_db
 
 @app.get("/lesson/{lesson_slug}", response_class=HTMLResponse)
 def lesson_page(lesson_slug: str, request: Request, db: Session = Depends(get_db)):
+    if lesson_slug == "speed-velocity":
+        return RedirectResponse("/lesson/speed", status_code=308)
     user = require_user(request, db, "student", "tutor", "admin")
     lesson = lesson_for_user(lesson_slug, user, db)
     if LESSON_CONTENTS.get(lesson_slug):
@@ -587,6 +589,8 @@ def lesson_page(lesson_slug: str, request: Request, db: Session = Depends(get_db
 
 @app.get("/lesson/{lesson_slug}/{section_key}", response_class=HTMLResponse)
 def lesson_section_page(lesson_slug: str, section_key: str, request: Request, db: Session = Depends(get_db)):
+    if lesson_slug == "speed-velocity":
+        return RedirectResponse(f"/lesson/speed/{section_key}", status_code=308)
     user = require_user(request, db, "student", "tutor", "admin")
     lesson = lesson_for_user(lesson_slug, user, db)
     content = LESSON_CONTENTS.get(lesson_slug)
