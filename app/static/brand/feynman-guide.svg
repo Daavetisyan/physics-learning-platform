@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-labelledby="title desc">
+  <title id="title">Richard Feynman educational guide portrait</title>
+  <desc id="desc">Original stylized portrait representing an AI educational guide inspired by physicist Richard Feynman.</desc>
+  <rect width="220" height="220" rx="34" fill="#e8f7f5"/>
+  <path d="M56 210c4-43 26-64 54-64s51 21 55 64" fill="#14243e"/>
+  <path d="M75 86c0-39 17-61 46-61 31 0 48 24 45 64l-5 38c-4 25-21 42-43 42-24 0-40-18-43-43z" fill="#f0c9a6"/>
+  <path d="M72 91c-8-44 15-74 53-74 31 0 50 19 48 55-13-18-31-27-55-27-19 0-34 15-46 46z" fill="#d7d2c5"/>
+  <path d="M75 82c-12 2-13 24 2 29m88-29c13 1 13 24-2 29" fill="none" stroke="#d7a882" stroke-width="6" stroke-linecap="round"/>
+  <path d="M89 96c7-5 14-5 21 0m18 0c7-5 14-5 21 0" fill="none" stroke="#58443a" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="101" cy="101" r="3" fill="#14243e"/><circle cx="138" cy="101" r="3" fill="#14243e"/>
+  <path d="M118 104l-4 20 11 1m-23 14c11 8 24 8 35 0" fill="none" stroke="#9b6555" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M88 166l30 25 31-25" fill="#fffaf1"/><path d="M106 183l12 8 13-9-4 28h-18z" fill="#f36b35"/>
+</svg>

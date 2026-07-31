@@ -75,9 +75,11 @@ def _position_response(message: str, mode: str) -> str:
 def _speed_response(message: str, mode: str) -> str:
     lower = message.lower()
     if mode == "guide":
+        if "rest" in lower or "stop" in lower or "average" in lower:
+            return "Draw a journey timeline. Add every traveled distance, then decide whether the question asks for complete elapsed time or moving time. For the complete trip, where does the stop appear in your total time?"
         return (
-            "Did the question use total path length or change in position? That tells you whether to use distance or displacement. "
-            "Then divide by total time and include direction if the quantity is velocity."
+            "List the known distance, time, and speed with units. Name the unknown, then choose v = d/t, d = vt, or t = d/v. "
+            "Before calculating, are the distance and time units compatible?"
         )
     if mode == "check":
         nums = _extract_numbers(message)
@@ -85,11 +87,15 @@ def _speed_response(message: str, mode: str) -> str:
             distance, time = nums[0], nums[1]
             if time == 0:
                 return "Time cannot be zero. Check the values copied from the problem."
-            return f"Using the first two values, {distance:g} ÷ {time:g} = {distance/time:g}. Now verify the units and whether direction is required."
-        return "Show the relationship, substituted values, units, and direction if the problem asks for velocity."
+            return f"Using the first value as distance and the second as time, {distance:g} ÷ {time:g} = {distance/time:g}. Check that you used total distance, included required stop time, and attached a distance-per-time unit."
+        return "Show the known values, chosen formula, substitution, unit conversion, and final unit. I will check each step without treating speed as directional."
     if "difference" in lower or ("speed" in lower and "velocity" in lower):
         return "Speed describes how fast using distance. Velocity describes rate of change of position and includes direction."
-    return "Average speed is total distance divided by total time. Average velocity is displacement divided by total time and needs direction."
+    if "rest" in lower or "stop" in lower:
+        return "For average speed over the complete journey, rest time belongs in total elapsed time even though no distance is added during the stop. Exclude it only if the problem explicitly asks for average speed while moving."
+    if "divide" in lower or "why" in lower:
+        return "Dividing distance by time shares the path across equal time units. For example, 20 m ÷ 4 s means 5 meters belong to each second, so the speed is 5 m/s."
+    return "Speed is total distance divided by total time. Tell me which values are known, including units, and whether the journey contains a stop."
 
 
 def _distance_displacement_response(message: str, mode: str) -> str:
@@ -127,4 +133,6 @@ def answer_as_scientist(message: str, mode: str = "explain", lesson_slug: str = 
         return _position_response(text, mode)
     if lesson_slug == "distance-displacement":
         return _distance_displacement_response(text, mode)
+    if lesson_slug == "speed":
+        return _speed_response(text, mode)
     return _speed_response(text, mode)

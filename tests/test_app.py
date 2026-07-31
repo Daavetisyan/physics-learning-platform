@@ -297,3 +297,84 @@ def test_lesson_two_progress_is_owned_by_authenticated_student():
         other_progress = list(db.scalars(select(Progress).where(Progress.student_id == second_profile.id)).all())
         assert any(row.score == 88 for row in lesson_progress)
         assert not any(row.score == 88 for row in other_progress)
+
+
+def test_lesson_three_routes_sequence_and_production_depth():
+    from app.main import build_lesson_steps
+    from app.speed_content import SPEED as content
+
+    client = TestClient(app)
+    login(client, "grade8@student.local", "VectorDemo8!")
+    course = client.get("/course/foundations-of-physics")
+    assert course.status_code == 200
+    assert course.text.index("Distance and Displacement") < course.text.index(">Speed<") < course.text.index(">Velocity<")
+    assert course.text.count("Production") >= 3
+
+    steps = build_lesson_steps(content)
+    assert len(steps) == 25
+    for index, step in enumerate(steps):
+        response = client.get(f"/lesson/speed/{step['key']}")
+        assert response.status_code == 200, step["key"]
+        assert step["label"] in response.text
+        if index:
+            assert steps[index - 1]["label"] in response.text
+        if index + 1 < len(steps):
+            assert steps[index + 1]["label"] in response.text
+
+    overview = client.get("/lesson/speed/overview")
+    assert "Distance and Displacement" in overview.text
+    assert "Velocity" in overview.text and "Building" in overview.text
+    assert "Grade 8 · Standard" in overview.text
+    words = sum(len(paragraph.split()) for chapter in content["theory_chapters"] for paragraph in chapter["paragraphs"])
+    assert 2000 <= words <= 2700
+    assert len(content["theory_chapters"]) == 11
+    assert len(content["theory_chapters"]) + len(content["additional_checks"]) >= 12
+    assert len(content["worked_examples"]) >= 9
+    assert len(content["misconceptions"]) >= 8
+    assert len(content["guided_practice"]) >= 12
+    assert sum(len(group["questions"]) for group in content["practice_groups"]) >= 18
+    assert len(content["quiz"]) >= 12
+
+
+def test_speed_physics_rejects_invalid_values_and_includes_stops():
+    import pytest
+    from app.speed import average_speed, calculate_distance, calculate_speed, calculate_time, position_at_time
+
+    assert calculate_speed(120, 30) == 4
+    assert calculate_distance(6, 5) == 30
+    assert calculate_time(45, 5) == 9
+    assert average_speed([2, 0, 2], [10, 5, 10]) == pytest.approx(0.16)
+    assert position_at_time(5, 3, 4) == 17
+    with pytest.raises(ValueError):
+        calculate_speed(10, 0)
+    with pytest.raises(ValueError):
+        calculate_speed(-1, 3)
+    with pytest.raises(ValueError):
+        average_speed([1], [-1])
+
+
+def test_lesson_three_lab_assessment_homework_ai_and_ownership():
+    first = TestClient(app)
+    second = TestClient(app)
+    login(first, "grade7@student.local", "VectorDemo7!")
+    login(second, "grade9@student.local", "VectorDemo9!")
+    simulation = first.get("/lesson/speed/simulation")
+    assert 'data-simulation="speed-lab"' in simulation.text
+    assert "speedRun" in simulation.text and "speedPause" in simulation.text and "speedGraph" in simulation.text
+    assessment = first.get("/lesson/speed/assessment")
+    assert assessment.text.count("quiz-question-card") >= 12
+    assert assessment.text.count('data-question-type="written_review"') == 2
+    homework = first.get("/lesson/speed/homework")
+    assert "Speed Practice Homework" in homework.text and 'aria-disabled="true"' in homework.text
+    ai = first.post("/api/ai-chat", json={"message": "Does a rest count in total time?", "mode": "explain", "lesson_slug": "speed"})
+    assert ai.status_code == 200
+    assert "elapsed time" in ai.json()["reply"].lower()
+
+    assert first.post("/api/progress/speed", json={"status": "completed", "score": 84}).status_code == 200
+    with SessionLocal() as db:
+        first_profile = db.scalar(select(StudentProfile).where(StudentProfile.email == "grade7@student.local"))
+        second_profile = db.scalar(select(StudentProfile).where(StudentProfile.email == "grade9@student.local"))
+        first_scores = [row.score for row in db.scalars(select(Progress).where(Progress.student_id == first_profile.id)).all()]
+        second_scores = [row.score for row in db.scalars(select(Progress).where(Progress.student_id == second_profile.id)).all()]
+        assert 84 in first_scores
+        assert 84 not in second_scores

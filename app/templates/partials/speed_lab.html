@@ -1,0 +1,60 @@
+<section class="lesson-step-body">
+  <div class="speed-lab" data-simulation="speed-lab">
+    <header class="speed-lab-head">
+      <div><span class="eyebrow">INTERACTIVE INVESTIGATION</span><h2>Speed Lab: Distance, Time and Motion</h2><p>Predict, run, and compare physically consistent constant-speed trials.</p></div>
+      <div class="speed-lab-score"><span>Tasks</span><strong id="speedTasksComplete">0 / 7</strong></div>
+    </header>
+
+    <div class="speed-lab-stage" id="speedStage" aria-label="One-dimensional motion track">
+      <div class="speed-track">
+        <div class="speed-target" id="speedTarget"><span>Target</span></div>
+        <div class="speed-runner runner-a" id="speedRunnerA"><span>A</span></div>
+        <div class="speed-runner runner-b" id="speedRunnerB"><span>B</span></div>
+        <div class="speed-track-ticks" aria-hidden="true">{% for tick in range(0, 101, 10) %}<i style="left:{{ tick }}%"><span>{{ tick }} m</span></i>{% endfor %}</div>
+      </div>
+      <div class="speed-live-readout" aria-live="polite">
+        <span>Distance <strong id="speedLiveDistance">0.0 m</strong></span>
+        <span>Time <strong id="speedLiveTime">0.0 s</strong></span>
+        <span>Speed <strong id="speedLiveSpeed">0.0 m/s</strong></span>
+      </div>
+    </div>
+
+    <div class="speed-lab-workspace">
+      <section class="speed-control-panel">
+        <h3>Trial settings</h3>
+        <div class="speed-input-grid">
+          <label>Starting position <output id="speedStartOutput">0 m</output><input id="speedStart" type="range" min="0" max="30" step="5" value="0"></label>
+          <label>Target distance <output id="speedDistanceOutput">60 m</output><input id="speedDistance" type="range" min="10" max="100" step="5" value="60"></label>
+          <label>Object A speed <output id="speedAOutput">6 m/s</output><input id="speedA" type="range" min="1" max="15" step="0.5" value="6"></label>
+          <label>Object B speed <output id="speedBOutput">4 m/s</output><input id="speedB" type="range" min="1" max="15" step="0.5" value="4"></label>
+          <label>Travel duration <output id="speedDurationOutput">10 s</output><input id="speedDuration" type="range" min="2" max="30" step="1" value="10"></label>
+          <label>Stop after <select id="speedStop"><option value="0">No stop</option><option value="3">3 s</option><option value="5">5 s</option></select></label>
+        </div>
+        <label class="speed-prediction">Prediction<textarea id="speedPrediction" rows="2" placeholder="What will happen, and why?"></textarea></label>
+        <div class="speed-primary-actions">
+          <button class="button primary" id="speedRun" type="button">Run trial</button>
+          <button class="button secondary" id="speedPause" type="button">Pause</button>
+          <button class="button secondary" id="speedReset" type="button">Reset</button>
+          <button class="button secondary" id="speedSave" type="button">Save trial</button>
+        </div>
+      </section>
+
+      <section class="speed-graph-panel">
+        <div class="speed-panel-title"><div><span class="eyebrow">LIVE REPRESENTATION</span><h3>Distance–time display</h3></div><small>Steeper means faster</small></div>
+        <svg id="speedGraph" class="speed-graph" viewBox="0 0 420 250" role="img" aria-label="Distance against time for the current trial">
+          <g class="speed-grid-lines" aria-hidden="true"><path d="M46 20V215H400 M46 166H400 M46 117H400 M46 68H400 M134 20V215 M222 20V215 M310 20V215 M398 20V215"></path></g>
+          <text x="10" y="25">100 m</text><text x="17" y="219">0 m</text><text x="355" y="242">time</text>
+          <polyline id="speedGraphA" class="graph-a" points="46,215"></polyline>
+          <polyline id="speedGraphB" class="graph-b" points="46,215"></polyline>
+        </svg>
+        <div class="speed-legend"><span><i class="a"></i>Object A</span><span><i class="b"></i>Object B</span></div>
+        <p id="speedLabFeedback" class="speed-lab-feedback" aria-live="polite">Set the values, write a prediction, then run the trial.</p>
+      </section>
+    </div>
+
+    <div class="speed-lab-lower">
+      <section><span class="eyebrow">CURRENT TASK</span><h3 id="speedTaskTitle">Keep distance constant and change time</h3><p id="speedTaskText">Run two trials to see how covering the same distance in less time requires greater speed.</p><label>Explanation<textarea id="speedExplanation" rows="2" placeholder="My result shows…"></textarea></label><button class="button primary" id="speedCheckTask" type="button">Check task</button></section>
+      <section><span class="eyebrow">SAVED COMPARISONS</span><div id="speedSavedTrials" class="speed-saved-trials"><p>No trials saved yet.</p></div></section>
+    </div>
+  </div>
+</section>

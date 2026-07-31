@@ -143,7 +143,7 @@ def build_lesson_steps(content: dict) -> list[dict[str, str]]:
                 "group": "Explore",
                 "description": (
                     content["simulation"]["instruction"]
-                    if content.get("simulation", {}).get("type") == "distance_displacement_journey"
+                    if content.get("simulation", {}).get("type") in {"distance_displacement_journey", "speed_lab"}
                     else "Change the reference frame and observe what changes and what stays invariant."
                 ),
             },
@@ -196,6 +196,19 @@ def seed_database(db: Session) -> None:
         course = Course(title=COURSE["title"], slug=COURSE["slug"], description=COURSE.get("description", ""), is_active=True)
         db.add(course)
         db.flush()
+
+    # Preserve the existing Lesson 3 record while separating Speed from the later Velocity lesson.
+    legacy_speed = db.scalar(select(Lesson).where(Lesson.slug == "speed-velocity"))
+    current_speed = db.scalar(select(Lesson).where(Lesson.slug == "speed"))
+    if legacy_speed and not current_speed:
+        legacy_speed.slug = "speed"
+        legacy_speed.title = "Speed"
+        db.flush()
+    elif legacy_speed and current_speed:
+        legacy_speed.publication_status = "archived"
+    retired_investigation = db.scalar(select(Lesson).where(Lesson.slug == "motion-investigation"))
+    if retired_investigation:
+        retired_investigation.publication_status = "archived"
 
     lessons: list[Lesson] = []
     for index, item in enumerate(LESSONS, 1):
@@ -589,14 +602,15 @@ def lesson_section_page(lesson_slug: str, section_key: str, request: Request, db
         number = int(section_key.split("-", 1)[1])
         chapter = next((item for item in content["theory_chapters"] if item["number"] == number), None)
     progress = None
+    student_profile = None
     if user.role == "student":
-        profile = profile_for(user, db)
-        progress = db.scalar(select(Progress).where(Progress.student_id == profile.id, Progress.lesson_id == lesson.id))
+        student_profile = profile_for(user, db)
+        progress = db.scalar(select(Progress).where(Progress.student_id == student_profile.id, Progress.lesson_id == lesson.id))
     return templates.TemplateResponse("lesson_section.html", {
         "request": request, "lesson": lesson, "course": COURSE, "content": content, "progress": progress, "steps": steps,
         "current_step": steps[index], "previous_step": steps[index - 1] if index else None,
         "next_step": steps[index + 1] if index + 1 < len(steps) else None, "step_index": index + 1,
-        "step_percent": round(100 * (index + 1) / len(steps)), "chapter": chapter,
+        "step_percent": round(100 * (index + 1) / len(steps)), "chapter": chapter, "student_profile": student_profile,
     })
 
 

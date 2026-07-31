@@ -69,6 +69,9 @@
         <span>ESSENTIAL QUESTION</span>
         <strong>{{ content.essential_question }}</strong>
       </div>
+      {% if lesson.slug == "speed" and student_profile %}
+      <div class="grade-path-note"><strong>Your learning path:</strong> Grade {{ student_profile.grade_level }} · {{ student_profile.learning_level|title }}. Foundation explanations remain available to everyone; Grade 8/9 conversion and reasoning extensions are identified inside the theory.</div>
+      {% endif %}
 
       <div class="step-block">
         <span class="eyebrow">LEARNING MAP</span>
@@ -175,6 +178,8 @@
     {% elif current_step.key == "simulation" %}
     {% if content.simulation.type == "distance_displacement_journey" %}
     {% include "partials/distance_displacement_lab.html" %}
+    {% elif content.simulation.type == "speed_lab" %}
+    {% include "partials/speed_lab.html" %}
     {% else %}
     {% include "partials/relative_position_lab.html" %}
     {% endif %}
@@ -218,10 +223,10 @@
     {% elif current_step.key == "assistant" %}
     <section class="lesson-step-body">
       <div class="ai-card">
-        <div class="scientist-panel"><div class="scientist-avatar"><img src="{{ url_for('static', path='brand/galileo-guide-realistic.png') }}" alt="Historically inspired portrait representing the Galileo AI educational guide"></div><strong>{{ content.scientist.name }}</strong><small>{{ content.scientist.subtitle }} · AI educational guide</small><p>“{{ content.scientist.opening }}”</p></div>
+        <div class="scientist-panel"><div class="scientist-avatar"><img src="{{ url_for('static', path=content.scientist.portrait|default('brand/galileo-guide-realistic.png')) }}" alt="Historically inspired portrait representing the {{ content.scientist.name }} AI educational guide"></div><strong>{{ content.scientist.name }}</strong><small>{{ content.scientist.subtitle }} · AI educational guide</small><p>“{{ content.scientist.opening }}”</p></div>
         <div class="chat-panel">
           <div class="mode-row"><button class="mode active" data-mode="explain">Explain</button><button class="mode" data-mode="guide">Guide me</button><button class="mode" data-mode="check">Check my work</button></div>
-          <div id="chatMessages" class="chat-messages"><div class="bot-message">{% if lesson.slug == "distance-displacement" %}Ask about path length, endpoint change, signs, round trips, or paste a distance/displacement calculation.{% else %}Ask about reference points, origins, coordinates, signs, relative position, or frames of reference. You can also paste your calculation.{% endif %}</div></div>
+          <div id="chatMessages" class="chat-messages"><div class="bot-message">{% if lesson.slug == "distance-displacement" %}Ask about path length, endpoint change, signs, round trips, or paste a distance/displacement calculation.{% elif lesson.slug == "speed" %}Ask about speed formulas, units, stops, average speed, or paste your calculation.{% else %}Ask about reference points, origins, coordinates, signs, relative position, or frames of reference. You can also paste your calculation.{% endif %}</div></div>
           {% if content.scientist.suggested_prompts %}<div class="suggested-prompts">{% for prompt in content.scientist.suggested_prompts %}<button type="button" class="suggested-prompt">{{ prompt }}</button>{% endfor %}</div>{% endif %}
           <form id="chatForm"><div class="chat-input"><input id="chatInput" aria-label="Question for the AI scientist" placeholder="Type or use voice…"><button id="voiceButton" type="button" title="Voice input" aria-label="Start voice input">●</button><button type="submit">Send</button></div></form>
         </div>
@@ -296,6 +301,8 @@
 <script src="{{ url_for('static', path='js/lesson.js') }}"></script>
 {% if current_step.key == "simulation" and content.simulation.type == "distance_displacement_journey" %}
 <script src="{{ url_for('static', path='js/distance-displacement-lab.js') }}"></script>
+{% elif current_step.key == "simulation" and content.simulation.type == "speed_lab" %}
+<script src="{{ url_for('static', path='js/speed-lab.js') }}"></script>
 {% elif current_step.key == "simulation" %}
 <script src="{{ url_for('static', path='js/relative-position-physics.js') }}"></script>
 <script src="{{ url_for('static', path='js/relative-position-lab.js') }}"></script>

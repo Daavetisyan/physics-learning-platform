@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .distance_displacement_content import DISTANCE_DISPLACEMENT
+from .speed_content import SPEED
 
 POSITION_REFERENCE_POINTS = {
     "status": "production",
@@ -467,4 +468,5 @@ POSITION_REFERENCE_POINTS = {
 LESSON_CONTENTS = {
     "position-reference-points": POSITION_REFERENCE_POINTS,
     "distance-displacement": DISTANCE_DISPLACEMENT,
+    "speed": SPEED,
 }
